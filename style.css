@@ -846,37 +846,6 @@ textarea:focus-visible {
     letter-spacing: 0.15em;
 }
 
-.hero-scroll {
-    position: absolute;
-    bottom: 20px;
-    left: var(--page-gutter);
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    border: 0;
-    background: transparent;
-    z-index: 3;
-    color: rgba(33, 30, 36, 0.72);
-    font-size: 0.69rem;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: opacity 200ms ease;
-}
-
-.hero-scroll span:last-child {
-    color: rgba(33, 30, 36, 0.72);
-}
-
-.hero-scroll .down-arrow {
-    color: var(--teal-deep);
-    font-size: 1.3rem;
-}
-
-.hero-scroll.fade-out {
-    opacity: 0;
-    pointer-events: none;
-}
-
 .technology-section {
     padding-top: clamp(110px, 14vw, 210px);
     padding-bottom: 70px;

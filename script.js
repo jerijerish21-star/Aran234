@@ -7,6 +7,19 @@
 
     let isAppInitialized = false;
 
+    if (typeof history !== "undefined") {
+        history.scrollRestoration = "manual";
+    }
+
+    if (window.location.hash) {
+        const sanitizedPath = `${window.location.pathname}${window.location.search}`;
+        if (typeof history.replaceState === "function") {
+            history.replaceState(null, "", sanitizedPath);
+        }
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
     function debounce(func, wait) {
         let timeout;
 
@@ -20,6 +33,32 @@
         if (isAppInitialized) return;
         isAppInitialized = true;
         document.documentElement.classList.add("js-enhanced");
+
+        let pageReadyTimeout = null;
+        let pageReadyResolved = false;
+
+        function markPageReady() {
+            if (pageReadyResolved) return;
+            pageReadyResolved = true;
+            if (pageReadyTimeout) {
+                window.clearTimeout(pageReadyTimeout);
+            }
+            document.documentElement.classList.add("page-ready");
+        }
+
+        pageReadyTimeout = window.setTimeout(markPageReady, 3500);
+
+        if (document.fonts && typeof document.fonts.ready !== "undefined") {
+            document.fonts.ready.then(markPageReady, markPageReady);
+        }
+
+        window.addEventListener("load", markPageReady, { once: true });
+        window.addEventListener("pageshow", (event) => {
+            if (event.persisted) {
+                window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+            }
+            markPageReady();
+        }, { once: true });
 
         // DOM helpers
         function $(selector, context) {
