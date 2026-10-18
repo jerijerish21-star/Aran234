@@ -1339,39 +1339,6 @@ textarea:focus-visible {
     max-width: 10ch;
 }
 
-.rubber-segment-container {
-    position: relative;
-    display: inline-flex;
-    min-height: 42px;
-    align-items: center;
-    border-bottom: 1px solid var(--line-dark);
-}
-
-.rs-labels {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.rs-btn {
-    padding: 10px 0;
-    border: 0;
-    background: none;
-    color: rgba(241, 237, 229, 0.6);
-    font-size: 0.71rem;
-    cursor: pointer;
-}
-
-.rs-btn.active {
-    color: var(--teal);
-}
-
-.rs-thumb {
-    display: none;
-}
-
 .gallery-intro-line {
     display: flex;
     justify-content: space-between;
@@ -2382,18 +2349,6 @@ textarea:focus-visible {
 
     .gallery-heading .section-title {
         max-width: 10ch;
-    }
-
-    .gallery-heading #galleryFilters {
-        margin-top: 30px;
-    }
-
-    .rs-labels {
-        gap: 17px;
-    }
-
-    .rs-btn {
-        font-size: 0.65rem;
     }
 
     .depth-carousel {

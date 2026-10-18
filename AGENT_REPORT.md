@@ -17,4 +17,10 @@
 
 ## Step 2: Gallery filter removal
 
-Pending verification and the Step 2 approval gate.
+- Before: the gallery exposed a single `ALL` filter, and gallery startup was nested inside that filter initializer. After: the filter markup, script, styles, and responsive rules are removed; `loadCarousel()` loads all five projects directly.
+- Kept project category data, carousel entrance animation, destroy/recreate behavior, heading, project studies line, carousel, hint, and no-JavaScript fallback.
+- Browser checks exposed that the carousel always selected horizontal mode, disabling its existing desktop drag and wheel handlers. It now uses horizontal scrolling only in mobile mode; desktop drag and wheel navigation use the existing carousel layout.
+- Verification: `node --check script.js` and `git diff --check` pass. At 1440×900, 1024×768, and 390×844, five cards render, the filter is absent, and the document has no horizontal overflow.
+- Interaction checks: desktop drag moved the active card from 01 to 02; wheel moved it to 03; keyboard activation of a dot moved it to 04. On mobile, horizontal wheel input and keyboard/dot navigation changed the active card. Opening a project started its muted video; Escape closed the modal and returned focus to the triggering card.
+- Fallback checks: with `script.js` blocked, all five static gallery cards and the contact-form fallback remained visible. Under reduced motion, all five carousel cards remained available and `.motion-ready` was absent. Normal page loads reported no console errors or warnings; the JavaScript-disabled check produced the expected blocked-script resource error.
+- Visual checks: captured and reviewed the gallery at 1440×900, 1024×768, and 390×844 in the integrated browser. Screenshots are shown in the review conversation; local Playwright is unavailable, so no screenshot files were written to `.agent-checks/`.

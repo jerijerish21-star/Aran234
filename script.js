@@ -681,116 +681,7 @@
             }
         ];
 
-        const filterOptions = [
-            { id: "all", label: "ALL" }
-        ];
-
         let currentCarousel = null;
-
-        function initRubberSegment() {
-            const container = $("#galleryFilters");
-
-            if (!container) return;
-
-            container.innerHTML = "";
-
-            const labelsContainer = document.createElement("div");
-            labelsContainer.className = "rs-labels";
-
-            const thumb = document.createElement("div");
-            thumb.className = "rs-thumb";
-
-            const thumbLabelsContainer =
-                document.createElement("div");
-
-            thumbLabelsContainer.className = "rs-thumb-labels";
-            thumb.appendChild(thumbLabelsContainer);
-
-            const buttons = [];
-            let activeIdx = 0;
-
-            filterOptions.forEach((item, index) => {
-                const btn = document.createElement("button");
-
-                btn.className =
-                    "rs-btn" + (index === 0 ? " active" : "");
-
-                btn.type = "button";
-                btn.textContent = item.label;
-
-                btn.addEventListener("click", () => {
-                    if (index === activeIdx) return;
-
-                    activeIdx = index;
-                    updateThumb(index);
-                    loadCarousel(item.id);
-                });
-
-                labelsContainer.appendChild(btn);
-                buttons.push(btn);
-
-                const copy = document.createElement("span");
-
-                copy.className = "rs-copy";
-                copy.textContent = item.label;
-
-                thumbLabelsContainer.appendChild(copy);
-            });
-
-            container.appendChild(labelsContainer);
-            container.appendChild(thumb);
-
-            function updateThumb(index) {
-                const button = buttons[index];
-
-                if (!button) return;
-
-                buttons.forEach((item, i) => {
-                    item.classList.toggle("active", i === index);
-                });
-
-                const btnRect = button.getBoundingClientRect();
-                const containerRect = container.getBoundingClientRect();
-                const labelsRect =
-                    labelsContainer.getBoundingClientRect();
-
-                const thumbX = btnRect.left - containerRect.left;
-                const width = btnRect.width;
-                const innerX = labelsRect.left - btnRect.left;
-
-                if (typeof gsap !== "undefined") {
-                    gsap.to(thumb, {
-                        x: thumbX,
-                        width,
-                        duration: 0.5,
-                        ease: "back.out(1.2)"
-                    });
-
-                    gsap.to(thumbLabelsContainer, {
-                        x: innerX,
-                        duration: 0.5,
-                        ease: "back.out(1.2)"
-                    });
-                } else {
-                    thumb.style.transform =
-                        `translateX(${thumbX}px)`;
-
-                    thumb.style.width = `${width}px`;
-
-                    thumbLabelsContainer.style.transform =
-                        `translateX(${innerX}px)`;
-                }
-            }
-
-            window.addEventListener(
-                "resize",
-                debounce(() => updateThumb(activeIdx), 150)
-            );
-
-            requestAnimationFrame(() => updateThumb(0));
-
-            loadCarousel("all");
-        }
 
         let activeModalMediaSize = null;
 
@@ -1216,6 +1107,7 @@
                 this.isMobile =
                     matchesMedia("(max-width: 768px)") ||
                     (matchesMedia("(pointer: coarse)") && vw <= 1024);
+                this.isHorizontal = this.isMobile;
 
                 if (!this.isMobile) {
                     this.cfg.cardWidth = Math.min(
@@ -2017,35 +1909,19 @@
             }
         }
 
-        function loadCarousel(filter) {
+        function loadCarousel() {
             const container = $("#galleryGrid");
 
             if (!container) return;
-
-            const filtered =
-                filter === "all"
-                    ? dynamicCapabilitiesData
-                    : dynamicCapabilitiesData.filter(
-                        (item) => item.category === filter
-                    );
 
             if (currentCarousel) {
                 currentCarousel.destroy();
                 currentCarousel = null;
             }
 
-            if (filtered.length === 0) {
-                container.innerHTML =
-                    '<div style="text-align:center;padding:40px;' +
-                    'color:var(--text-muted);">' +
-                    "No capabilities mapped.</div>";
-
-                return;
-            }
-
             currentCarousel = new VanillaDepthCarousel(
                 container,
-                filtered
+                dynamicCapabilitiesData
             );
 
             if (typeof gsap !== "undefined" && !prefersReducedMotion) {
@@ -2059,7 +1935,7 @@
             }
         }
 
-        initRubberSegment();
+        loadCarousel();
 
         const FORM_ENDPOINT = "https://formspree.io/f/xdarywrz";
 
