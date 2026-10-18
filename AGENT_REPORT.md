@@ -51,3 +51,9 @@
 - Added a fixed chapter rail with numbered, directly navigable links derived from the existing section kickers; it appears when a story section is current and marks that section with `aria-current="location"`.
 - Kept all eight links keyboard-accessible and adapted the rail to a horizontally scrollable bottom strip on narrow screens, retaining 44px link targets.
 - Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed correct current-chapter updates for all eight sections, navigation to Industries through the rail, visibility on desktop and mobile, and no document overflow at 390px or 320px viewport widths.
+
+## Step 7: Headline and About reveals
+
+- Added a scroll-triggered reveal for the hero headline and staggered reveals for the existing About paragraphs and statistic rows. Removed the broad About-grid animation so the section's text and stats can enter independently; the existing section-title reveals remain in place.
+- Kept all animation runtime-only and behind the existing reduced-motion gate, without changing page copy or static layout.
+- Verification: `node --check script.js` and `git diff --check` pass. Browser checks observed each reveal progress from hidden to fully visible under normal motion, while emulated reduced motion left the headline, paragraphs, and stats visible and did not add `motion-ready`.

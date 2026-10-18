@@ -349,10 +349,57 @@
                 });
             });
 
+            const heroHeadline = $(".hero h1");
+            if (heroHeadline) {
+                gsap.from(heroHeadline, {
+                    scrollTrigger: {
+                        trigger: heroHeadline,
+                        start: "top 82%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 24,
+                    opacity: 0,
+                    duration: 0.85,
+                    ease: "power3.out"
+                });
+            }
+
+            const aboutContent = $(".about-content");
+            const aboutParagraphs = $$(".about-content > p");
+            if (aboutContent && aboutParagraphs.length > 0) {
+                gsap.from(aboutParagraphs, {
+                    scrollTrigger: {
+                        trigger: aboutContent,
+                        start: "top 78%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 18,
+                    opacity: 0,
+                    stagger: 0.12,
+                    duration: 0.65,
+                    ease: "power2.out"
+                });
+            }
+
+            const aboutStats = $$(".about-stats .stat-row");
+            if (aboutStats.length > 0) {
+                gsap.from(aboutStats, {
+                    scrollTrigger: {
+                        trigger: ".about-stats",
+                        start: "top 82%",
+                        toggleActions: "play none none none"
+                    },
+                    x: 18,
+                    opacity: 0,
+                    stagger: 0.1,
+                    duration: 0.65,
+                    ease: "power2.out"
+                });
+            }
+
             const grids = [
                 ".core-grid",
                 ".value-grid",
-                ".about-grid",
                 ".technology-statements"
             ];
 
