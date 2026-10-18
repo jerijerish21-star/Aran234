@@ -465,7 +465,7 @@
         }
 
         layoutBlueprint(1, 1, 1, 3, 0);
-        const slideDownBtn = $("#slideDownBtn");
+        const scrollHint = $("#scrollHint");
         const openingConfig = Object.freeze({
             questionIn: [0, 0.10],
             questionDrop: [0.30, 0.44],
@@ -503,6 +503,37 @@
             );
         }
 
+        function updateNavbarTheme(themeName) {
+            if (!navbar) return;
+            const theme = themeName === "dark" ? "dark" : "light";
+            navbar.setAttribute("data-nav-theme", theme);
+            if (scrollHint) {
+                scrollHint.classList.toggle("on-dark", theme === "dark");
+                scrollHint.classList.toggle("on-light", theme === "light");
+            }
+        }
+
+        const themeSections = $$("[data-nav-theme]");
+        if ("IntersectionObserver" in window && themeSections.length) {
+            const themeObserver = new IntersectionObserver((entries) => {
+                const visible = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+                if (visible && visible.target.dataset.navTheme) {
+                    updateNavbarTheme(visible.target.dataset.navTheme);
+                }
+            }, {
+                rootMargin: "-30% 0px -45% 0px",
+                threshold: [0.15, 0.35, 0.7, 1]
+            });
+
+            themeSections.forEach((section) => themeObserver.observe(section));
+            const initialTheme = themeSections[0].dataset.navTheme || "dark";
+            updateNavbarTheme(initialTheme);
+        } else {
+            updateNavbarTheme("dark");
+        }
+
         syncMobileNavbarViewport();
         window.addEventListener("resize", debounce(syncMobileNavbarViewport, 150), {
             passive: true
@@ -530,20 +561,15 @@
             mobileNavMedia.addListener(syncMobileNavbarViewport);
         }
 
-        if (slideDownBtn) {
-            slideDownBtn.addEventListener("click", () => {
-                if (opening) {
-                    const revealPoint = opening.offsetTop + Math.max(
-                        0,
-                        opening.offsetHeight - window.innerHeight
-                    ) * openingConfig.arrowTarget;
-                    window.scrollTo({
-                        top: revealPoint,
-                        behavior: prefersReducedMotion
-                            ? "auto"
-                            : "smooth"
-                    });
-                }
+        if (scrollHint) {
+            const targetSelector = scrollHint.dataset.target || "#technology";
+            scrollHint.addEventListener("click", () => {
+                const target = $(targetSelector);
+                if (!target) return;
+                target.scrollIntoView({
+                    behavior: prefersReducedMotion ? "auto" : "smooth",
+                    block: "start"
+                });
             });
         }
 
@@ -602,22 +628,6 @@
             style.setProperty("--o-arrow-shift", `${(12 * (1 - arrow)).toFixed(2)}px`);
             style.setProperty("--o-arrow-scale", (0.82 + 0.18 * arrow).toFixed(3));
 
-            if (slideDownBtn) {
-                const arrowVisible = arrow > 0.01;
-                slideDownBtn.classList.toggle("is-visible", arrowVisible);
-
-                if (arrowVisible) {
-                    slideDownBtn.removeAttribute("aria-hidden");
-                    slideDownBtn.setAttribute("tabindex", "0");
-                } else {
-                    if (document.activeElement === slideDownBtn) {
-                        slideDownBtn.blur();
-                    }
-                    slideDownBtn.setAttribute("aria-hidden", "true");
-                    slideDownBtn.setAttribute("tabindex", "-1");
-                }
-            }
-
             return progress;
         }
 
@@ -648,6 +658,12 @@
                 );
             }
 
+            if (scrollHint) {
+                const nearBottom = window.innerHeight + scrollY >= document.body.scrollHeight - 24;
+                const shouldHideHint = scrollY > 80 && !nearBottom;
+                scrollHint.classList.toggle("is-hidden", shouldHideHint);
+            }
+
             scrollTicking = false;
         }
 
@@ -663,6 +679,11 @@
         window.addEventListener("resize", debounce(() => {
             handleScroll();
         }, 150), { passive: true });
+
+        window.addEventListener("pageshow", () => {
+            window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+            handleScroll();
+        });
 
         handleScroll();
 
