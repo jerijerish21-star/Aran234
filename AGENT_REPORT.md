@@ -69,3 +69,8 @@
 - Added a fixed mobile “Start a conversation” link after the first story chapter, positioned above the chapter strip and hidden while the Contact chapter is active. Desktop continues to use the existing primary navigation CTA.
 - Added `dataLayer` events for primary/mobile contact CTAs, email and phone links, and successful form submissions. Events contain only event name and placement; no form values or personal data are sent, and no analytics script or network request was added.
 - Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed the CTA is mobile-only, does not overlap the chapter strip or overflow the viewport, hides in Contact, and pushes correctly placed events. The successful-form event was tested with a locally mocked fetch response; no external form request was sent.
+
+## Step 10: Optional process illustration evaluation
+
+- Reviewed the process section at 1440×900 against the existing four-step milestone rail, active-step narrative, and process path/nodes in the story-layer SVG.
+- Decision: did not add a second illustration. It would repeat the process cues already present and compete with the spacious sticky timeline; the existing elements provide a clear process visual without another asset or copy change.
