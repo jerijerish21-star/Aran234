@@ -89,10 +89,104 @@ textarea:focus-visible {
 }
 
 .container {
+    position: relative;
+    z-index: 2;
     width: 100%;
     max-width: var(--page-content-max);
     margin: 0 auto;
     padding-inline: var(--page-gutter);
+}
+
+.story-layer {
+    position: fixed;
+    z-index: 1;
+    inset: 0;
+    overflow: hidden;
+    color: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--story-dur) var(--story-ease);
+}
+
+.story-layer svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.story-motif,
+.story-scroll-trace {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.story-motif {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+        opacity var(--story-dur) var(--story-ease),
+        transform var(--story-dur) var(--story-ease);
+}
+
+.story-motif--baseline path {
+    stroke-width: 1.1;
+}
+
+.story-process-path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+
+.story-process-node {
+    fill: currentColor;
+    opacity: 0.18;
+    transition: opacity var(--story-dur) var(--story-ease);
+}
+
+.story-scroll-trace {
+    opacity: 0.42;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--story-progress, 0));
+}
+
+html[data-story-chapter] .story-layer {
+    opacity: 1;
+}
+
+html[data-story-tone="dark"] .story-layer {
+    color: var(--paper);
+}
+
+html[data-story-tone="dark"] .story-motif {
+    --story-motif-opacity: var(--story-line-opacity-dark);
+}
+
+html[data-story-tone="paper"] .story-motif {
+    --story-motif-opacity: var(--story-line-opacity-paper);
+}
+
+html[data-story-chapter="technology"] .story-motif--baseline,
+html[data-story-chapter="about"] .story-motif--grid,
+html[data-story-chapter="process"] .story-motif--process,
+html[data-story-chapter="capabilities"] .story-motif--modules,
+html[data-story-chapter="difference"] .story-motif--modules,
+html[data-story-chapter="industries"] .story-motif--loop,
+html[data-story-chapter="contact"] .story-motif--baseline {
+    opacity: var(--story-motif-opacity);
+    transform: none;
+}
+
+html[data-story-chapter="gallery"] .story-layer {
+    opacity: 0.025;
+}
+
+.story-motif--baseline .story-fine-detail,
+.story-grid-detail,
+.story-motif--modules .story-fine-detail,
+.story-motif--loop .story-fine-detail {
+    opacity: 0.65;
 }
 
 .section {
@@ -2536,6 +2630,16 @@ textarea:focus-visible {
     }
 }
 
+@media (max-width: 768px), (pointer: coarse) {
+    .story-fine-detail {
+        display: none;
+    }
+
+    .story-scroll-trace {
+        stroke-dashoffset: 0;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .opening {
         height: auto;
@@ -2617,6 +2721,16 @@ textarea:focus-visible {
 
     .opening-scroll span {
         animation: none;
+    }
+
+    .story-scroll-trace,
+    .story-motif:not(.story-motif--baseline) {
+        display: none;
+    }
+
+    .story-motif--baseline {
+        opacity: var(--story-motif-opacity);
+        transform: none;
     }
 }
 
@@ -2704,6 +2818,17 @@ html[data-motion="off"] .motion-ready .process-experience {
 
 html[data-motion="off"] .opening-scroll span {
     animation: none;
+}
+
+html[data-motion="off"] .story-scroll-trace,
+html[data-motion="off"] .story-motif:not(.story-motif--baseline),
+html[data-motion="off"] .story-motif--baseline .story-fine-detail {
+    display: none;
+}
+
+html[data-motion="off"] .story-motif--baseline {
+    opacity: var(--story-motif-opacity);
+    transform: none;
 }
 
 /* Blueprint scaling for large displays (4K / 60" TVs) */

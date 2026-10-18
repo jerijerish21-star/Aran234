@@ -32,3 +32,10 @@
 - Added one centered-section `IntersectionObserver` registry and set `--story-progress` in the existing scroll animation-frame handler.
 - Added `id="difference"` to the existing Value section without changing its markup or copy.
 - Verification: `node --check script.js` and `git diff --check` pass. Browser checks selected each of the eight story sections in sequence, observed `--story-progress` change, and confirmed saved motion-off state is applied before animation setup.
+
+## Step 4: Background story layer
+
+- Added one JavaScript-created, fixed inline SVG layer with restrained baseline, measuring-grid, process-path, modular-cell, and loop states. It starts at the Approach section; selected work fades to 2.5% layer opacity, and Contact returns to the baseline.
+- Set line tone from the current section, placed the layer at z-index 1 beneath `.container` content at z-index 2, and drove the process path/nodes from `updateProcessNodes(progress)`.
+- Kept the existing scroll-frame `--story-progress` as the page trace driver. Mobile/coarse-pointer styling hides fine detail and does not scrub the page trace; reduced motion and motion-off show only the static baseline.
+- Verification: JavaScript syntax and whitespace checks pass. Browser checks confirmed all eight chapter/tone states, mobile simplification without horizontal overflow, and a static baseline with other motifs hidden under reduced motion and motion-off. The process-layer screenshot was reviewed at 1440×900; content and navigation remain above the lines.

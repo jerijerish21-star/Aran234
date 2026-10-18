@@ -159,8 +159,14 @@
             if (currentStorySection) {
                 document.documentElement.dataset.storyChapter =
                     currentStorySection;
+                document.documentElement.dataset.storyTone =
+                    currentSection.classList.contains("dark-surface") ||
+                    currentSection.classList.contains("value-section")
+                        ? "dark"
+                        : "paper";
             } else {
                 delete document.documentElement.dataset.storyChapter;
+                delete document.documentElement.dataset.storyTone;
             }
         }
 
@@ -194,6 +200,46 @@
         if (!setupStorySectionRegistry()) {
             updateStorySectionRegistry();
         }
+
+        const storyLayer = document.createElement("div");
+        storyLayer.className = "story-layer";
+        storyLayer.setAttribute("aria-hidden", "true");
+
+        const storySvg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+        storySvg.setAttribute("viewBox", "0 0 1000 1000");
+        storySvg.setAttribute("preserveAspectRatio", "none");
+        storySvg.setAttribute("focusable", "false");
+        storySvg.innerHTML = `
+            <path class="story-scroll-trace" pathLength="1" d="M80 535H920"></path>
+            <g class="story-motif story-motif--baseline">
+                <path d="M80 535H920"></path>
+                <path class="story-fine-detail" d="M150 520v30M250 525v20M350 520v30M450 525v20M550 520v30M650 525v20M750 520v30M850 525v20"></path>
+            </g>
+            <g class="story-motif story-motif--grid">
+                <path class="story-grid-base" d="M150 360H850M150 535H850M150 710H850M150 360V710M500 360V710M850 360V710"></path>
+                <path class="story-grid-detail story-fine-detail" d="M325 360V710M675 360V710M150 447H850M150 622H850"></path>
+            </g>
+            <g class="story-motif story-motif--process">
+                <path class="story-process-path" pathLength="1" d="M100 625H900"></path>
+                <circle class="story-process-node" cx="100" cy="625" r="7"></circle>
+                <circle class="story-process-node" cx="367" cy="625" r="7"></circle>
+                <circle class="story-process-node" cx="633" cy="625" r="7"></circle>
+                <circle class="story-process-node" cx="900" cy="625" r="7"></circle>
+            </g>
+            <g class="story-motif story-motif--modules">
+                <path d="M160 390H410V640H160ZM460 390H710V640H460ZM760 390H840V640H760Z"></path>
+                <path class="story-fine-detail" d="M285 390V640M585 390V640M160 515H410M460 515H710M760 515H840"></path>
+            </g>
+            <g class="story-motif story-motif--loop">
+                <path d="M270 525C270 390 390 330 500 330S730 390 730 525 610 720 500 720 270 660 270 525Z"></path>
+                <path class="story-fine-detail" d="M500 330V285M730 525H775M500 720V765M270 525H225"></path>
+            </g>
+        `;
+        storyLayer.appendChild(storySvg);
+        document.body.prepend(storyLayer);
 
         // GSAP animations
         if (
@@ -353,6 +399,14 @@
             if (progressLine) {
                 progressLine.style.transform = `scaleY(${progressValue})`;
             }
+            const storyProcessPath = $(".story-process-path");
+            if (storyProcessPath) {
+                storyProcessPath.style.strokeDashoffset = String(1 - value);
+            }
+            $$(".story-process-node").forEach((node, index) => {
+                node.style.opacity = index <= activeIndex ? "1" : "0.18";
+                node.classList.toggle("is-active", index === activeIndex);
+            });
             const storyRule = $(".process-story-rule");
             if (storyRule) {
                 storyRule.style.setProperty("--process-progress", String(progressValue));
