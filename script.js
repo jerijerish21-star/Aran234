@@ -140,13 +140,6 @@
         let processSequenceTween = null;
         let processSequenceObserver = null;
 
-        if (prefersReducedMotion || typeof gsap === "undefined") {
-            $$(".fouc-prevent").forEach((el) => {
-                el.style.visibility = "visible";
-                el.style.opacity = "1";
-            });
-        }
-
         // GSAP animations
         if (
             typeof gsap !== "undefined" &&
@@ -209,44 +202,17 @@
 
             if (prefersReducedMotion) return;
 
-            if (!isLowPowerDevice) {
-                gsap.to(".slide-down .down-arrow", {
-                    y: 6,
-                    opacity: 0.6,
-                    duration: 1.2,
-                    ease: "sine.inOut",
-                    yoyo: true,
-                    repeat: -1
-                });
-            }
-
-            $$(".section-title, .section-header .tech-label").forEach(
-                (el) => {
-                    const header = el.closest(".section-header");
-
-                    gsap.from(el, {
-                        scrollTrigger: {
-                            trigger: header || el,
-                            start: "top 85%",
-                            toggleActions: "play none none none"
-                        },
-                        y: 20,
-                        opacity: 0,
-                        duration: 0.8,
-                        ease: "power3.out"
-                    });
-                }
-            );
-
-            $$(".section-rule").forEach((rule) => {
-                gsap.from(rule, {
+            $$(".section-title").forEach((el) => {
+                gsap.from(el, {
                     scrollTrigger: {
-                        trigger: rule,
-                        start: "top 85%"
+                        trigger: el,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
                     },
-                    scaleX: 0,
-                    duration: 1,
-                    ease: "expo.out"
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
                 });
             });
 
@@ -625,8 +591,6 @@
             handleScroll();
         }, 150), { passive: true });
 
-        handleScroll();
-
         const menuBtn = $("#menuButton");
         const navLinks = $("#navLinks");
 
@@ -668,99 +632,7 @@
         }
 
         document.body.classList.add("js-enhanced");
-        document.documentElement.classList.remove("nav-init-pending");
         handleScroll();
-
-        function initBackgroundGrid() {
-            if (prefersReducedMotion || isLowPowerDevice) return;
-
-            if ($(".dynamic-bg-grid")) return;
-
-            const gridContainer = document.createElement("div");
-
-            gridContainer.className = "dynamic-bg-grid";
-
-            gridContainer.style.cssText =
-                "position:fixed;top:0;left:0;width:100vw;height:100vh;" +
-                "z-index:-2;overflow:hidden;perspective:1000px;" +
-                "pointer-events:none;";
-
-            const gridPlane = document.createElement("div");
-
-            gridPlane.style.cssText =
-                "position:absolute;width:200%;height:200%;" +
-                "bottom:-50%;left:-50%;" +
-                "background-image:" +
-                "linear-gradient(rgba(200,230,226,0.05) 1px,transparent 1px)," +
-                "linear-gradient(90deg,rgba(200,230,226,0.05) 1px,transparent 1px);" +
-                "background-size:60px 60px;" +
-                "transform:rotateX(60deg) translateY(0px);";
-
-            gridContainer.appendChild(gridPlane);
-            document.body.prepend(gridContainer);
-
-        }
-
-        function initMouseHoverGradients() {
-            if (
-                prefersReducedMotion ||
-                window.innerWidth <= 1024
-            ) {
-                return;
-            }
-
-            const attachHoverEffect = (container) => {
-                if (container.dataset.hoverBound) return;
-
-                container.dataset.hoverBound = "true";
-
-                const computedStyle =
-                    window.getComputedStyle(container);
-
-                if (computedStyle.position === "static") {
-                    container.style.position = "relative";
-                }
-
-                container.style.overflow = "hidden";
-
-                const overlay = document.createElement("div");
-
-                overlay.className = "mouse-gradient-overlay";
-
-                overlay.style.cssText =
-                    "position:absolute;top:0;left:0;width:100%;height:100%;" +
-                    "pointer-events:none;z-index:0;" +
-                    "transition:opacity 0.4s ease;opacity:0;" +
-                    "background:radial-gradient(circle 200px at 50% 50%," +
-                    "rgba(200,230,226,0.12),transparent 80%);";
-
-                container.prepend(overlay);
-
-                container.addEventListener("mouseenter", () => {
-                    overlay.style.opacity = "1";
-                });
-
-                container.addEventListener("mousemove", (event) => {
-                    const rect = container.getBoundingClientRect();
-                    const x = event.clientX - rect.left;
-                    const y = event.clientY - rect.top;
-
-                    overlay.style.background =
-                        `radial-gradient(circle 200px at ${x}px ${y}px,` +
-                        "rgba(200,230,226,0.15),transparent 80%)";
-                });
-
-                container.addEventListener("mouseleave", () => {
-                    overlay.style.opacity = "0";
-                });
-            };
-
-            $$(".hover-gradient-container, .feature-card").forEach(
-                attachHoverEffect
-            );
-
-            window.attachHoverEffect = attachHoverEffect;
-        }
 
         const dynamicCapabilitiesData = [
             {
@@ -1473,13 +1345,6 @@
                     card.appendChild(media);
                     card.appendChild(tint);
                     card.appendChild(title);
-
-                    if (
-                        window.attachHoverEffect &&
-                        !this.isHorizontal
-                    ) {
-                        window.attachHoverEffect(card);
-                    }
 
                     card.addEventListener("click", () => {
                         window.openProjectModal(item, card);
@@ -2433,166 +2298,5 @@
             document.documentElement.classList.add("js-enabled");
         }
         
-        function initAntigravityBackground() {
-            if (
-                prefersReducedMotion ||
-                isLowPowerDevice ||
-                document.hidden
-            ) return;
-
-            const canvas = document.createElement("canvas");
-            canvas.id = "antigravityCanvas";
-            canvas.setAttribute("aria-hidden", "true");
-            canvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;";
-
-            const ctx = canvas.getContext("2d", { alpha: true });
-            if (!ctx) return;
-            document.body.prepend(canvas);
-
-            let width = 0;
-            let height = 0;
-            let animationFrameId = 0;
-            let isRunning = false;
-            let time = 0;
-            const frameInterval = 1000 / 30;
-
-            const isSmallScreen = matchesMedia("(max-width: 768px)");
-            const isMediumScreen = matchesMedia("(max-width: 1200px)");
-            const config = {
-                count: isSmallScreen ? 45 : (isMediumScreen ? 85 : 125),
-                magnetRadius: 120,
-                waveSpeed: 0.004,
-                waveAmplitude: 10,
-                particleSize: 1.5,
-                particleVariance: 1,
-                color: "#c8e6e2",
-                pulseSpeed: 0.020,
-                fieldStrength: 5,
-                depthFactor: 1.0
-            };
-
-            const particles = [];
-            const mouse = { x: -1000, y: -1000 };
-            const canUsePointer = matchesMedia("(hover: hover) and (pointer: fine)");
-
-            function resize() {
-                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-                width = Math.max(1, window.innerWidth);
-                height = Math.max(1, window.innerHeight);
-                canvas.width = Math.round(width * dpr);
-                canvas.height = Math.round(height * dpr);
-                canvas.style.width = `${width}px`;
-                canvas.style.height = `${height}px`;
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            }
-
-            resize();
-            for (let i = 0; i < config.count; i++) {
-                const y = Math.random() * height;
-                particles.push({
-                    x: Math.random() * width,
-                    y,
-                    baseY: y,
-                    size: config.particleSize + Math.random() * config.particleVariance,
-                    angle: Math.random() * Math.PI * 2,
-                    speed: (0.1 + Math.random() * 0.4) * config.depthFactor,
-                    pulseOffset: Math.random() * Math.PI * 2
-                });
-            }
-
-            let resizeTimer;
-                window.addEventListener("resize", () => {
-                    document.body.classList.add("is-resizing");
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(() => {
-                        document.body.classList.remove("is-resizing");
-                        handleScroll();
-                    }, 200);
-                }, { passive: true });
-
-            const debouncedResize = debounce(resize, 150);
-            window.addEventListener("resize", debouncedResize, { passive: true });
-
-            function handlePointerMove(event) {
-                mouse.x = event.clientX;
-                mouse.y = event.clientY;
-            }
-            function handlePointerLeave() {
-                mouse.x = -1000;
-                mouse.y = -1000;
-            }
-            if (canUsePointer) {
-                window.addEventListener("pointermove", handlePointerMove, { passive: true });
-                window.addEventListener("blur", handlePointerLeave);
-            }
-
-            function animate() {
-                if (!isRunning || document.hidden) {
-                    animationFrameId = 0;
-                    return;
-                }
-
-                ctx.clearRect(0, 0, width, height);
-                time++;
-                for (const p of particles) {
-                    p.angle += config.waveSpeed;
-                    p.y = p.baseY + Math.sin(p.angle) * config.waveAmplitude;
-                    p.x -= p.speed;
-                    p.y -= p.speed * 0.5;
-
-                    if (p.x < 0 || p.y < 0 || p.y > height) {
-                        p.x = width + Math.random() * 50;
-                        p.y = Math.random() * height;
-                        p.baseY = p.y;
-                    }
-
-                    let drawX = p.x;
-                    let drawY = p.y;
-                    if (canUsePointer) {
-                        const dx = mouse.x - p.x;
-                        const dy = mouse.y - p.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist > 0 && dist < config.magnetRadius) {
-                            const force = (config.magnetRadius - dist) / config.magnetRadius;
-                            drawX -= (dx / dist) * force * config.fieldStrength;
-                            drawY -= (dy / dist) * force * config.fieldStrength;
-                        }
-                    }
-
-                    const currentSize = p.size + Math.sin(time * config.pulseSpeed + p.pulseOffset) * 0.5;
-                    ctx.beginPath();
-                    ctx.arc(drawX, drawY, Math.max(0.1, currentSize), 0, Math.PI * 2);
-                    ctx.fillStyle = config.color;
-                    ctx.globalAlpha = Math.min(1, Math.max(0.2, currentSize / 2));
-                    ctx.fill();
-                }
-                ctx.globalAlpha = 1;
-                animationFrameId = window.setTimeout(() => {
-                    animationFrameId = window.requestAnimationFrame(animate);
-                }, frameInterval);
-            }
-
-            function startAnimation() {
-                if (isRunning || document.hidden || prefersReducedMotion) return;
-                isRunning = true;
-                animationFrameId = window.requestAnimationFrame(animate);
-            }
-            function stopAnimation() {
-                isRunning = false;
-                if (animationFrameId) {
-                    window.cancelAnimationFrame(animationFrameId);
-                    window.clearTimeout(animationFrameId);
-                    animationFrameId = 0;
-                }
-            }
-            function handleVisibilityChange() {
-                if (document.hidden) stopAnimation();
-                else startAnimation();
-            }
-
-            document.addEventListener("visibilitychange", handleVisibilityChange);
-            startAnimation();
-        }
-
     });
 })();
