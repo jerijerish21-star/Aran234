@@ -39,8 +39,9 @@
 
     <script>
         try {
-            if (localStorage.getItem("aran-motion") === "off") {
-                document.documentElement.dataset.motion = "off";
+            const motionPreference = localStorage.getItem("aran-motion");
+            if (motionPreference === "off" || motionPreference === "on") {
+                document.documentElement.dataset.motion = motionPreference;
             }
         } catch (error) {
             console.warn("Unable to read the saved motion preference.", error);
@@ -74,6 +75,7 @@
                 <a href="#capabilities" class="nav-item">Capabilities</a>
                 <a href="#gallery" class="nav-item">Selected work</a>
                 <a href="#contact" class="nav-cta">Start a conversation <span aria-hidden="true">↗</span></a>
+                <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false" hidden><span class="motion-toggle-label">Motion: On</span></button>
             </nav>
             <button class="menu-button" id="menuButton" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
                 <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>

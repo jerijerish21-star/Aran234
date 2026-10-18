@@ -39,3 +39,9 @@
 - Set line tone from the current section, placed the layer at z-index 1 beneath `.container` content at z-index 2, and drove the process path/nodes from `updateProcessNodes(progress)`.
 - Kept the existing scroll-frame `--story-progress` as the page trace driver. Mobile/coarse-pointer styling hides fine detail and does not scrub the page trace; reduced motion and motion-off show only the static baseline.
 - Verification: JavaScript syntax and whitespace checks pass. Browser checks confirmed all eight chapter/tone states, mobile simplification without horizontal overflow, and a static baseline with other motifs hidden under reduced motion and motion-off. The process-layer screenshot was reviewed at 1440×900; content and navigation remain above the lines.
+
+## Step 5: Accessible motion toggle
+
+- Added the approved “Motion: On” / “Motion: Off” button to the navigation and mobile menu, with `aria-pressed` state and a 44px minimum touch target.
+- The control persists the selected value in `localStorage` and reloads so all motion setup consistently follows the choice. The early head script now reads both saved values; reduced-motion CSS respects an explicit motion-on override.
+- Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed the default On state, Off and On persistence across reloads, system reduced-motion defaulting to Off, explicit On overriding the system preference, and mobile-menu visibility, pressed state, and 44px height. No public deployment was performed.

@@ -719,6 +719,34 @@
 
         const menuBtn = $("#menuButton");
         const navLinks = $("#navLinks");
+        const motionToggle = $("#motionToggle");
+
+        if (motionToggle) {
+            const label = $(".motion-toggle-label", motionToggle);
+            const motionOff = prefersReducedMotion;
+            motionToggle.setAttribute("aria-pressed", String(motionOff));
+            if (label) label.textContent = `Motion: ${motionOff ? "Off" : "On"}`;
+            motionToggle.hidden = false;
+
+            motionToggle.addEventListener("click", () => {
+                const nextPreference =
+                    motionToggle.getAttribute("aria-pressed") === "true"
+                        ? "on"
+                        : "off";
+
+                try {
+                    localStorage.setItem("aran-motion", nextPreference);
+                } catch (error) {
+                    console.error(
+                        "Unable to save the motion preference.",
+                        error
+                    );
+                    return;
+                }
+
+                window.location.reload();
+            });
+        }
 
         if (menuBtn && navLinks) {
             menuBtn.setAttribute("aria-expanded", "false");

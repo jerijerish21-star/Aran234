@@ -381,6 +381,27 @@ html[data-story-chapter="gallery"] .story-layer {
     color: var(--eigengrau);
 }
 
+.motion-toggle {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 12px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.motion-toggle:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
 .menu-button {
     display: none;
     width: 42px;
@@ -2119,6 +2140,11 @@ html[data-story-chapter="gallery"] .story-layer {
         border: 1px solid var(--ink);
     }
 
+    .nav-links .motion-toggle {
+        align-self: flex-start;
+        margin-top: 12px;
+    }
+
     .navbar:not(.transition-complete) .nav-links {
         background: var(--eigengrau);
         color: var(--paper);
@@ -2641,11 +2667,11 @@ html[data-story-chapter="gallery"] .story-layer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .opening {
+    html:not([data-motion="on"]) .opening {
         height: auto;
     }
 
-    .opening-stage {
+    html:not([data-motion="on"]) .opening-stage {
         position: relative;
         display: flex;
         height: auto;
@@ -2661,13 +2687,13 @@ html[data-story-chapter="gallery"] .story-layer {
         --o-scale: 1;
     }
 
-    .opening-blueprint,
-    .opening-scroll {
+    html:not([data-motion="on"]) .opening-blueprint,
+    html:not([data-motion="on"]) .opening-scroll {
         display: none;
     }
 
-    .opening-question,
-    .opening-answer {
+    html:not([data-motion="on"]) .opening-question,
+    html:not([data-motion="on"]) .opening-answer {
         position: relative;
         inset: auto;
         width: min(26em, 100%);
@@ -2676,12 +2702,12 @@ html[data-story-chapter="gallery"] .story-layer {
         transform: none;
     }
 
-    .opening-answer {
+    html:not([data-motion="on"]) .opening-answer {
         align-self: flex-end;
         margin-top: 1.25rem;
     }
 
-    .opening-brand {
+    html:not([data-motion="on"]) .opening-brand {
         position: relative;
         top: auto;
         left: auto;
@@ -2691,7 +2717,7 @@ html[data-story-chapter="gallery"] .story-layer {
         will-change: auto;
     }
 
-    .opening-note {
+    html:not([data-motion="on"]) .opening-note {
         position: relative;
         right: auto;
         bottom: auto;
@@ -2700,35 +2726,35 @@ html[data-story-chapter="gallery"] .story-layer {
         color: var(--ink);
     }
 
-    *,
-    *::before,
-    *::after {
+    html:not([data-motion="on"]) *,
+    html:not([data-motion="on"]) *::before,
+    html:not([data-motion="on"]) *::after {
         scroll-behavior: auto !important;
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
 
-    .motion-ready .process-timeline-container {
+    html:not([data-motion="on"]) .motion-ready .process-timeline-container {
         min-height: 0;
     }
 
-    .motion-ready .process-experience {
+    html:not([data-motion="on"]) .motion-ready .process-experience {
         position: relative;
         top: auto;
         min-height: 390px;
     }
 
-    .opening-scroll span {
+    html:not([data-motion="on"]) .opening-scroll span {
         animation: none;
     }
 
-    .story-scroll-trace,
-    .story-motif:not(.story-motif--baseline) {
+    html:not([data-motion="on"]) .story-scroll-trace,
+    html:not([data-motion="on"]) .story-motif:not(.story-motif--baseline) {
         display: none;
     }
 
-    .story-motif--baseline {
+    html:not([data-motion="on"]) .story-motif--baseline {
         opacity: var(--story-motif-opacity);
         transform: none;
     }
