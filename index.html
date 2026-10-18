@@ -53,7 +53,7 @@
 </head>
 
 <body>
-    <header class="navbar opening-hidden" id="navbar">
+    <header class="navbar opening-hidden" id="navbar" data-nav-theme="dark">
         <div class="nav-inner">
             <a href="#home" class="nav-logo" aria-label="Aran Technocrafts home">
                 <img src="assets/images/logo-optimized.png" alt="Aran Technocrafts" width="180" height="51" decoding="async">
@@ -72,8 +72,13 @@
         </div>
     </header>
 
+    <button class="scroll-hint" id="scrollHint" type="button" data-target="#technology" aria-label="Scroll to discover Aran Technocrafts">
+        <span class="scroll-hint__mouse" aria-hidden="true"></span>
+        <span class="scroll-hint__label">Scroll to discover</span>
+    </button>
+
     <main>
-        <section id="opening" class="opening" aria-label="Aran Technocrafts introduction">
+        <section id="opening" class="opening" aria-label="Aran Technocrafts introduction" data-nav-theme="dark">
             <div class="opening-stage">
                 <div class="opening-blueprint" aria-hidden="true">
                     <div class="bp-grid"></div>
@@ -105,13 +110,10 @@
                     <p class="opening-tagline">We Automate Your Process For Better Productivity</p>
                 </div>
                 <p class="opening-note">Engineering a better way to make.</p>
-                <button id="slideDownBtn" class="opening-scroll" type="button" aria-label="Scroll to discover Aran Technocrafts" aria-hidden="true" tabindex="-1">
-                    <span aria-hidden="true">↓</span> Scroll to discover
-                </button>
             </div>
         </section>
 
-        <section id="home" class="hero" aria-label="Introduction">
+        <section id="home" class="hero" aria-label="Introduction" data-nav-theme="dark">
             <div class="hero-stage">
                 <div class="hero-copy">
                     <p class="eyebrow"><span class="eyebrow-mark"></span> Aran Technocrafts · Bengaluru, India</p>
@@ -125,7 +127,7 @@
             </div>
         </section>
 
-        <section id="technology" class="section technology-section paper-section">
+        <section id="technology" class="section technology-section paper-section" data-nav-theme="light">
             <div class="container">
                 <div class="section-kicker"><span>01</span><span>Our approach</span><span class="kicker-line"></span></div>
                 <div class="technology-grid">
@@ -151,7 +153,7 @@
             </div>
         </section>
 
-        <section id="about" class="section about-section dark-surface">
+        <section id="about" class="section about-section dark-surface" data-nav-theme="dark">
             <div class="container">
                 <div class="section-kicker light-kicker"><span>02</span><span>About Aran</span><span class="kicker-line"></span></div>
                 <div class="about-grid">
@@ -170,7 +172,7 @@
             </div>
         </section>
 
-        <section id="process" class="section process-section">
+        <section id="process" class="section process-section" data-nav-theme="light">
             <div class="container">
                 <div class="section-kicker"><span>03</span><span>How we work</span><span class="kicker-line"></span></div>
                 <div class="process-heading">
@@ -205,7 +207,7 @@
             </div>
         </section>
 
-        <section id="capabilities" class="section capabilities-section paper-section">
+        <section id="capabilities" class="section capabilities-section paper-section" data-nav-theme="light">
             <div class="container">
                 <div class="section-kicker"><span>04</span><span>What we make possible</span><span class="kicker-line"></span></div>
                 <div class="capability-heading">
@@ -229,7 +231,7 @@
             </div>
         </section>
 
-        <section class="section value-section">
+        <section class="section value-section" data-nav-theme="light">
             <div class="container">
                 <div class="section-kicker light-kicker"><span>05</span><span>The difference</span><span class="kicker-line"></span></div>
                 <div class="value-heading"><h2 class="section-title">Engineered for the <em>long run.</em></h2><p>Good automation does more than run. It makes your operation more capable.</p></div>
@@ -242,7 +244,7 @@
             </div>
         </section>
 
-        <section id="industries" class="section industries-section">
+        <section id="industries" class="section industries-section" data-nav-theme="light">
             <div class="container">
                 <div class="section-kicker"><span>06</span><span>Where we work</span><span class="kicker-line"></span></div>
                 <div class="industries-heading"><h2 class="section-title">Different industries.<br><em>One thoughtful approach.</em></h2><p>Automation shaped around the demands of your environment.</p></div>
@@ -255,7 +257,7 @@
             </div>
         </section>
 
-        <section id="gallery" class="section gallery-section dark-surface">
+        <section id="gallery" class="section gallery-section dark-surface" data-nav-theme="dark">
             <div class="container">
                 <div class="section-kicker light-kicker"><span>07</span><span>Selected work</span><span class="kicker-line"></span></div>
                 <div class="gallery-heading">
@@ -276,7 +278,7 @@
             </div>
         </section>
 
-        <section id="contact" class="section contact-section footer-section">
+        <section id="contact" class="section contact-section footer-section" data-nav-theme="light">
             <div class="container">
                 <div class="section-kicker"><span>08</span><span>Make something work better</span><span class="kicker-line"></span></div>
                 <div class="contact-heading">
