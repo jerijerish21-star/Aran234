@@ -144,6 +144,31 @@
         const storySections = $$(".section-kicker")
             .map((kicker) => kicker.closest(".section"))
             .filter((section) => section && section.id);
+        const storyChapterLinks = new Map();
+        const storyChapterNav = document.createElement("nav");
+        storyChapterNav.className = "story-chapters";
+        storyChapterNav.setAttribute("aria-label", "Story chapters");
+        const storyChapterList = document.createElement("ol");
+
+        storySections.forEach((section) => {
+            const kickerSpans = $$(".section-kicker span", section);
+            const number = kickerSpans[0].textContent.trim();
+            const title = kickerSpans[1].textContent.trim();
+            const link = document.createElement("a");
+            const item = document.createElement("li");
+
+            link.className = "story-chapter-link";
+            link.href = `#${section.id}`;
+            link.textContent = number;
+            link.setAttribute("aria-label", `${number} ${title}`);
+            link.title = title;
+            item.appendChild(link);
+            storyChapterList.appendChild(item);
+            storyChapterLinks.set(section.id, link);
+        });
+
+        storyChapterNav.appendChild(storyChapterList);
+        document.body.appendChild(storyChapterNav);
         let currentStorySection = null;
         let sectionRegistryObserver = null;
         let registryViewportHeight = 0;
@@ -156,6 +181,13 @@
             });
 
             currentStorySection = currentSection ? currentSection.id : null;
+            storyChapterLinks.forEach((link, sectionId) => {
+                if (sectionId === currentStorySection) {
+                    link.setAttribute("aria-current", "location");
+                } else {
+                    link.removeAttribute("aria-current");
+                }
+            });
             if (currentStorySection) {
                 document.documentElement.dataset.storyChapter =
                     currentStorySection;

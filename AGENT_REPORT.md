@@ -45,3 +45,9 @@
 - Added the approved “Motion: On” / “Motion: Off” button to the navigation and mobile menu, with `aria-pressed` state and a 44px minimum touch target.
 - The control persists the selected value in `localStorage` and reloads so all motion setup consistently follows the choice. The early head script now reads both saved values; reduced-motion CSS respects an explicit motion-on override.
 - Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed the default On state, Off and On persistence across reloads, system reduced-motion defaulting to Off, explicit On overriding the system preference, and mobile-menu visibility, pressed state, and 44px height. No public deployment was performed.
+
+## Step 6: Story chapter indicator
+
+- Added a fixed chapter rail with numbered, directly navigable links derived from the existing section kickers; it appears when a story section is current and marks that section with `aria-current="location"`.
+- Kept all eight links keyboard-accessible and adapted the rail to a horizontally scrollable bottom strip on narrow screens, retaining 44px link targets.
+- Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed correct current-chapter updates for all eight sections, navigation to Industries through the rail, visibility on desktop and mobile, and no document overflow at 390px or 320px viewport widths.

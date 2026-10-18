@@ -189,6 +189,63 @@ html[data-story-chapter="gallery"] .story-layer {
     opacity: 0.65;
 }
 
+.story-chapters {
+    position: fixed;
+    z-index: 20;
+    top: 50%;
+    right: clamp(12px, 2vw, 32px);
+    padding: 5px;
+    border: 1px solid rgba(33, 30, 36, 0.16);
+    background: rgba(241, 237, 229, 0.92);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(8px, -50%);
+    transition:
+        opacity 250ms var(--story-ease),
+        transform 250ms var(--story-ease);
+    visibility: hidden;
+}
+
+html[data-story-chapter] .story-chapters {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(0, -50%);
+    visibility: visible;
+}
+
+.story-chapters ol {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    list-style: none;
+}
+
+.story-chapter-link {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    color: var(--ink-soft);
+    font-size: 0.62rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        color 200ms ease;
+}
+
+.story-chapter-link:hover,
+.story-chapter-link[aria-current="location"] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+}
+
 .section {
     position: relative;
     padding: clamp(86px, 10vw, 160px) 0;
@@ -2098,6 +2155,34 @@ html[data-story-chapter="gallery"] .story-layer {
 }
 
 @media (max-width: 900px) {
+    .story-chapters {
+        top: auto;
+        right: auto;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        left: 50%;
+        max-width: calc(100vw - 16px);
+        overflow-x: auto;
+        padding: 4px;
+        border-radius: 2px;
+        scrollbar-width: none;
+        transform: translate(-50%, 8px);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .story-chapters::-webkit-scrollbar {
+        display: none;
+    }
+
+    html[data-story-chapter] .story-chapters {
+        transform: translate(-50%, 0);
+    }
+
+    .story-chapters ol {
+        flex-direction: row;
+        gap: 0;
+        width: max-content;
+    }
+
     .menu-button {
         display: flex;
     }
