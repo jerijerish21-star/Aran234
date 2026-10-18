@@ -37,17 +37,6 @@
         href="assets/images/logo-optimized.png"
         fetchpriority="high">
 
-    <script>
-        try {
-            const motionPreference = localStorage.getItem("aran-motion");
-            if (motionPreference === "off" || motionPreference === "on") {
-                document.documentElement.dataset.motion = motionPreference;
-            }
-        } catch (error) {
-            console.warn("Unable to read the saved motion preference.", error);
-        }
-    </script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
     
@@ -56,6 +45,7 @@
 
     <noscript>
         <style>
+            .fouc-prevent { visibility: visible !important; opacity: 1 !important; transform: none !important; }
             .opening { height: auto; }
             .navbar.opening-hidden { visibility: visible; opacity: 1; pointer-events: auto; transform: none; }
         </style>
@@ -74,16 +64,13 @@
                 <a href="#process" class="nav-item">Process</a>
                 <a href="#capabilities" class="nav-item">Capabilities</a>
                 <a href="#gallery" class="nav-item">Selected work</a>
-                <a href="#contact" class="nav-cta" data-conversion-event="contact_cta_click" data-conversion-location="primary_nav">Start a conversation <span aria-hidden="true">↗</span></a>
-                <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false" hidden><span class="motion-toggle-label">Motion: On</span></button>
+                <a href="#contact" class="nav-cta">Start a conversation <span aria-hidden="true">↗</span></a>
             </nav>
             <button class="menu-button" id="menuButton" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
                 <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
             </button>
         </div>
     </header>
-
-    <a href="#contact" class="mobile-contact-cta" data-conversion-event="contact_cta_click" data-conversion-location="mobile_sticky">Start a conversation <span aria-hidden="true">↗</span></a>
 
     <main>
         <section id="opening" class="opening" aria-label="Aran Technocrafts introduction">
@@ -226,27 +213,23 @@
                     <p>Our capabilities come together as one considered solution—built to fit your line, your product and your next stage of growth.</p>
                 </div>
                 <div class="core-grid capability-list">
-                    <details class="capability-item" name="capabilities">
-                        <summary class="capability-summary"><span class="capability-number">01</span><span class="capability-title" role="heading" aria-level="3">Industrial robotics &amp; vision</span><span class="capability-arrow" aria-hidden="true"></span></summary>
-                        <div class="capability-content"><p>Integration of multi-axis articulated robots, cobots, and vision inspection systems for automated material handling, welding, pick-and-place, and stringent quality control.</p></div>
-                    </details>
-                    <details class="capability-item" name="capabilities">
-                        <summary class="capability-summary"><span class="capability-number">02</span><span class="capability-title" role="heading" aria-level="3">Special Purpose Machines (SPMs)</span><span class="capability-arrow" aria-hidden="true"></span></summary>
-                        <div class="capability-content"><ul class="clean-list"><li>Custom assembly line equipment tailored to specific product geometries.</li><li>Specialized testing and quality assurance rigs (leak testing, performance testing).</li><li>High-speed dedicated processing machinery.</li></ul></div>
-                    </details>
-                    <details class="capability-item" name="capabilities">
-                        <summary class="capability-summary"><span class="capability-number">03</span><span class="capability-title" role="heading" aria-level="3">Industrial automation</span><span class="capability-arrow" aria-hidden="true"></span></summary>
-                        <div class="capability-content"><ul class="clean-list"><li>Automated Material Handling Systems (Conveyors, Gantries).</li><li>PLC/SCADA-based control panels and integration.</li></ul></div>
-                    </details>
-                    <details class="capability-item" name="capabilities">
-                        <summary class="capability-summary"><span class="capability-number">04</span><span class="capability-title" role="heading" aria-level="3">Turnkey solutions</span><span class="capability-arrow" aria-hidden="true"></span></summary>
-                        <div class="capability-content"><p>Full-lifecycle development featuring PLC/SCADA programming, control panel fabrication, and complete shop-floor integration.</p></div>
-                    </details>
+                    <article class="capability-item">
+                        <span class="capability-number">01</span><div><h3>Industrial robotics &amp; vision</h3><p>Integration of multi-axis articulated robots, cobots, and vision inspection systems for automated material handling, welding, pick-and-place, and stringent quality control.</p></div><span class="capability-arrow" aria-hidden="true">↗</span>
+                    </article>
+                    <article class="capability-item">
+                        <span class="capability-number">02</span><div><h3>Special Purpose Machines (SPMs)</h3><ul class="clean-list"><li>Custom assembly line equipment tailored to specific product geometries.</li><li>Specialized testing and quality assurance rigs (leak testing, performance testing).</li><li>High-speed dedicated processing machinery.</li></ul></div><span class="capability-arrow" aria-hidden="true">↗</span>
+                    </article>
+                    <article class="capability-item">
+                        <span class="capability-number">03</span><div><h3>Industrial automation</h3><ul class="clean-list"><li>Automated Material Handling Systems (Conveyors, Gantries).</li><li>PLC/SCADA-based control panels and integration.</li></ul></div><span class="capability-arrow" aria-hidden="true">↗</span>
+                    </article>
+                    <article class="capability-item">
+                        <span class="capability-number">04</span><div><h3>Turnkey solutions</h3><p>Full-lifecycle development featuring PLC/SCADA programming, control panel fabrication, and complete shop-floor integration.</p></div><span class="capability-arrow" aria-hidden="true">↗</span>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <section id="difference" class="section value-section">
+        <section class="section value-section">
             <div class="container">
                 <div class="section-kicker light-kicker"><span>05</span><span>The difference</span><span class="kicker-line"></span></div>
                 <div class="value-heading"><h2 class="section-title">Engineered for the <em>long run.</em></h2><p>Good automation does more than run. It makes your operation more capable.</p></div>
@@ -277,6 +260,7 @@
                 <div class="section-kicker light-kicker"><span>07</span><span>Selected work</span><span class="kicker-line"></span></div>
                 <div class="gallery-heading">
                     <div><h2 class="section-title">Made real<br><em>on the factory floor.</em></h2><p>Machines and systems designed for the work ahead.</p></div>
+                    <div id="galleryFilters" class="rubber-segment-container" role="tablist" aria-label="Project categories"></div>
                 </div>
                 <div class="gallery-intro-line"><span>Project studies</span><span>Explore the work <span aria-hidden="true">↓</span></span></div>
                 <div class="depth-carousel" id="galleryGrid" role="region" aria-label="Project gallery carousel">
@@ -303,11 +287,11 @@
                     <div class="contact-info">
                         <div class="contact-details-grid">
                             <div class="contact-data"><span class="tech-label green">Visit us</span><p>65, 11th A Cross Rd, Yeshwanthpur Suburb II Stage,<br>Rajagopala Nagar, Peenya, Bengaluru, Karnataka 560058</p><a href="https://maps.google.com/?q=Aran+Technocrafts+Bangalore" target="_blank" rel="noopener noreferrer" class="tech-link inline">Get directions <span aria-hidden="true">↗</span></a></div>
-                            <div class="contact-data"><span class="tech-label green">Talk to our team</span><p><a href="mailto:info@arantechnocrafts.com" data-conversion-event="contact_email_click" data-conversion-location="contact_details">info@arantechnocrafts.com</a></p><p><a href="tel:+918050008243" data-conversion-event="contact_phone_click" data-conversion-location="contact_details">+91 8050008243</a></p></div>
+                            <div class="contact-data"><span class="tech-label green">Talk to our team</span><p><a href="mailto:info@arantechnocrafts.com">info@arantechnocrafts.com</a></p><p><a href="tel:+918050008243">+91 8050008243</a></p></div>
                         </div>
                     </div>
                     <div class="contact-form-container tech-card form-card">
-                        <p id="contactFormFallback" class="contact-form-fallback">The enquiry form is unavailable because JavaScript did not load. Please email <a href="mailto:info@arantechnocrafts.com" data-conversion-event="contact_email_click" data-conversion-location="form_fallback">info@arantechnocrafts.com</a> or call <a href="tel:+918050008243" data-conversion-event="contact_phone_click" data-conversion-location="form_fallback">+91 8050008243</a>.</p>
+                        <p id="contactFormFallback" class="contact-form-fallback">The enquiry form is unavailable because JavaScript did not load. Please email <a href="mailto:info@arantechnocrafts.com">info@arantechnocrafts.com</a> or call <a href="tel:+918050008243">+91 8050008243</a>.</p>
                         <form id="contactForm" method="POST" class="industrial-form">
                             <div class="form-header"><h3>Tell us about your project</h3><span class="form-status-indicator" aria-hidden="true"></span></div>
                             <input type="hidden" name="_subject" value="New Automation Project Enquiry">

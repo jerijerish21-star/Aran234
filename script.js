@@ -32,38 +32,6 @@
             );
         }
 
-        if (typeof window.dataLayer === "undefined") {
-            window.dataLayer = [];
-        }
-
-        function trackConversion(eventName, location) {
-            if (!eventName || !location) {
-                console.error("Conversion events require an event name and location.");
-                return;
-            }
-            if (!Array.isArray(window.dataLayer)) {
-                console.error("Conversion event could not be recorded because dataLayer is not an array.");
-                return;
-            }
-
-            window.dataLayer.push({
-                event: eventName,
-                conversion_location: location
-            });
-        }
-
-        document.addEventListener("click", (event) => {
-            const target = event.target instanceof Element
-                ? event.target.closest("a[data-conversion-event]")
-                : null;
-            if (!target) return;
-
-            trackConversion(
-                target.dataset.conversionEvent,
-                target.dataset.conversionLocation
-            );
-        });
-
         const dialogReturnTargets = new WeakMap();
         let activeDialogElement = null;
 
@@ -163,147 +131,21 @@
                 : false;
         }
 
-        const motionPreference = document.documentElement.dataset.motion;
-        const prefersReducedMotion =
-            motionPreference === "off" ||
-            (motionPreference !== "on" &&
-                matchesMedia("(prefers-reduced-motion: reduce)"));
+        const prefersReducedMotion = matchesMedia(
+            "(prefers-reduced-motion: reduce)"
+        );
         const isLowPowerDevice =
             window.innerWidth <= 1024 ||
             matchesMedia("(pointer: coarse)");
         let processSequenceTween = null;
         let processSequenceObserver = null;
-        const storySections = $$(".section-kicker")
-            .map((kicker) => kicker.closest(".section"))
-            .filter((section) => section && section.id);
-        const storyChapterLinks = new Map();
-        const storyChapterNav = document.createElement("nav");
-        storyChapterNav.className = "story-chapters";
-        storyChapterNav.setAttribute("aria-label", "Story chapters");
-        const storyChapterList = document.createElement("ol");
 
-        storySections.forEach((section) => {
-            const kickerSpans = $$(".section-kicker span", section);
-            const number = kickerSpans[0].textContent.trim();
-            const title = kickerSpans[1].textContent.trim();
-            const link = document.createElement("a");
-            const item = document.createElement("li");
-
-            link.className = "story-chapter-link";
-            link.href = `#${section.id}`;
-            link.textContent = number;
-            link.setAttribute("aria-label", `${number} ${title}`);
-            link.title = title;
-            item.appendChild(link);
-            storyChapterList.appendChild(item);
-            storyChapterLinks.set(section.id, link);
-        });
-
-        storyChapterNav.appendChild(storyChapterList);
-        document.body.appendChild(storyChapterNav);
-        let currentStorySection = null;
-        let sectionRegistryObserver = null;
-        let registryViewportHeight = 0;
-
-        function updateStorySectionRegistry() {
-            const marker = window.innerHeight / 2;
-            const currentSection = storySections.find((section) => {
-                const bounds = section.getBoundingClientRect();
-                return bounds.top <= marker && bounds.bottom > marker;
+        if (prefersReducedMotion || typeof gsap === "undefined") {
+            $$(".fouc-prevent").forEach((el) => {
+                el.style.visibility = "visible";
+                el.style.opacity = "1";
             });
-
-            currentStorySection = currentSection ? currentSection.id : null;
-            storyChapterLinks.forEach((link, sectionId) => {
-                if (sectionId === currentStorySection) {
-                    link.setAttribute("aria-current", "location");
-                } else {
-                    link.removeAttribute("aria-current");
-                }
-            });
-            if (currentStorySection) {
-                document.documentElement.dataset.storyChapter =
-                    currentStorySection;
-                document.documentElement.dataset.storyTone =
-                    currentSection.classList.contains("dark-surface") ||
-                    currentSection.classList.contains("value-section")
-                        ? "dark"
-                        : "paper";
-            } else {
-                delete document.documentElement.dataset.storyChapter;
-                delete document.documentElement.dataset.storyTone;
-            }
         }
-
-        function setupStorySectionRegistry() {
-            if (!("IntersectionObserver" in window)) return false;
-            if (sectionRegistryObserver) {
-                sectionRegistryObserver.disconnect();
-            }
-
-            const topInset = Math.floor(window.innerHeight / 2);
-            const bottomInset = Math.max(
-                0,
-                window.innerHeight - topInset - 1
-            );
-            sectionRegistryObserver = new IntersectionObserver(
-                updateStorySectionRegistry,
-                {
-                    rootMargin:
-                        `-${topInset}px 0px -${bottomInset}px 0px`,
-                    threshold: 0
-                }
-            );
-            storySections.forEach((section) =>
-                sectionRegistryObserver.observe(section)
-            );
-            registryViewportHeight = window.innerHeight;
-            updateStorySectionRegistry();
-            return true;
-        }
-
-        if (!setupStorySectionRegistry()) {
-            updateStorySectionRegistry();
-        }
-
-        const storyLayer = document.createElement("div");
-        storyLayer.className = "story-layer";
-        storyLayer.setAttribute("aria-hidden", "true");
-
-        const storySvg = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "svg"
-        );
-        storySvg.setAttribute("viewBox", "0 0 1000 1000");
-        storySvg.setAttribute("preserveAspectRatio", "none");
-        storySvg.setAttribute("focusable", "false");
-        storySvg.innerHTML = `
-            <path class="story-scroll-trace" pathLength="1" d="M80 535H920"></path>
-            <g class="story-motif story-motif--baseline">
-                <path d="M80 535H920"></path>
-                <path class="story-fine-detail" d="M150 520v30M250 525v20M350 520v30M450 525v20M550 520v30M650 525v20M750 520v30M850 525v20"></path>
-            </g>
-            <g class="story-motif story-motif--grid">
-                <path class="story-grid-base" d="M150 360H850M150 535H850M150 710H850M150 360V710M500 360V710M850 360V710"></path>
-                <path class="story-grid-detail story-fine-detail" d="M325 360V710M675 360V710M150 447H850M150 622H850"></path>
-            </g>
-            <g class="story-motif story-motif--process">
-                <path class="story-process-path" pathLength="1" d="M100 625H900"></path>
-                <circle class="story-process-node" cx="100" cy="625" r="7"></circle>
-                <circle class="story-process-node" cx="367" cy="625" r="7"></circle>
-                <circle class="story-process-node" cx="633" cy="625" r="7"></circle>
-                <circle class="story-process-node" cx="900" cy="625" r="7"></circle>
-            </g>
-            <g class="story-motif story-motif--modules">
-                <path d="M160 390H410V640H160ZM460 390H710V640H460ZM760 390H840V640H760Z"></path>
-                <path class="story-fine-detail" d="M285 390V640M585 390V640M160 515H410M460 515H710M760 515H840"></path>
-            </g>
-            <g class="story-motif story-motif--loop">
-                <path d="M270 525C270 390 390 330 500 330S730 390 730 525 610 720 500 720 270 660 270 525Z"></path>
-                <path class="story-fine-detail" d="M500 330V285M730 525H775M500 720V765M270 525H225"></path>
-            </g>
-        `;
-        storyLayer.appendChild(storySvg);
-        document.body.prepend(storyLayer);
 
         // GSAP animations
         if (
@@ -367,70 +209,51 @@
 
             if (prefersReducedMotion) return;
 
-            $$(".section-title").forEach((el) => {
-                gsap.from(el, {
+            if (!isLowPowerDevice) {
+                gsap.to(".slide-down .down-arrow", {
+                    y: 6,
+                    opacity: 0.6,
+                    duration: 1.2,
+                    ease: "sine.inOut",
+                    yoyo: true,
+                    repeat: -1
+                });
+            }
+
+            $$(".section-title, .section-header .tech-label").forEach(
+                (el) => {
+                    const header = el.closest(".section-header");
+
+                    gsap.from(el, {
+                        scrollTrigger: {
+                            trigger: header || el,
+                            start: "top 85%",
+                            toggleActions: "play none none none"
+                        },
+                        y: 20,
+                        opacity: 0,
+                        duration: 0.8,
+                        ease: "power3.out"
+                    });
+                }
+            );
+
+            $$(".section-rule").forEach((rule) => {
+                gsap.from(rule, {
                     scrollTrigger: {
-                        trigger: el,
-                        start: "top 85%",
-                        toggleActions: "play none none none"
+                        trigger: rule,
+                        start: "top 85%"
                     },
-                    y: 20,
-                    opacity: 0,
-                    duration: 0.8,
-                    ease: "power3.out"
+                    scaleX: 0,
+                    duration: 1,
+                    ease: "expo.out"
                 });
             });
 
-            const heroHeadline = $(".hero h1");
-            if (heroHeadline) {
-                gsap.from(heroHeadline, {
-                    scrollTrigger: {
-                        trigger: heroHeadline,
-                        start: "top 82%",
-                        toggleActions: "play none none none"
-                    },
-                    y: 24,
-                    opacity: 0,
-                    duration: 0.85,
-                    ease: "power3.out"
-                });
-            }
-
-            const aboutContent = $(".about-content");
-            const aboutParagraphs = $$(".about-content > p");
-            if (aboutContent && aboutParagraphs.length > 0) {
-                gsap.from(aboutParagraphs, {
-                    scrollTrigger: {
-                        trigger: aboutContent,
-                        start: "top 78%",
-                        toggleActions: "play none none none"
-                    },
-                    y: 18,
-                    opacity: 0,
-                    stagger: 0.12,
-                    duration: 0.65,
-                    ease: "power2.out"
-                });
-            }
-
-            const aboutStats = $$(".about-stats .stat-row");
-            if (aboutStats.length > 0) {
-                gsap.from(aboutStats, {
-                    scrollTrigger: {
-                        trigger: ".about-stats",
-                        start: "top 82%",
-                        toggleActions: "play none none none"
-                    },
-                    x: 18,
-                    opacity: 0,
-                    stagger: 0.1,
-                    duration: 0.65,
-                    ease: "power2.out"
-                });
-            }
-
             const grids = [
+                ".core-grid",
                 ".value-grid",
+                ".about-grid",
                 ".technology-statements"
             ];
 
@@ -509,14 +332,6 @@
             if (progressLine) {
                 progressLine.style.transform = `scaleY(${progressValue})`;
             }
-            const storyProcessPath = $(".story-process-path");
-            if (storyProcessPath) {
-                storyProcessPath.style.strokeDashoffset = String(1 - value);
-            }
-            $$(".story-process-node").forEach((node, index) => {
-                node.style.opacity = index <= activeIndex ? "1" : "0.18";
-                node.classList.toggle("is-active", index === activeIndex);
-            });
             const storyRule = $(".process-story-rule");
             if (storyRule) {
                 storyRule.style.setProperty("--process-progress", String(progressValue));
@@ -693,9 +508,7 @@
             });
         }
 
-        let openingIntroTimeline = null;
         let scrollTicking = false;
-
         function updateOpening(scrollY) {
             if (!opening || !openingStage) return 1;
             if (prefersReducedMotion) return 1;
@@ -771,28 +584,7 @@
 
         function handleScroll() {
             const scrollY = window.scrollY;
-            if (openingIntroTimeline && opening && scrollY > opening.offsetTop) {
-                openingIntroTimeline.kill();
-                openingIntroTimeline = null;
-            }
             const openingProgress = updateOpening(scrollY);
-            const scrollRange = Math.max(
-                1,
-                document.documentElement.scrollHeight - window.innerHeight
-            );
-            const storyProgress = Math.max(
-                0,
-                Math.min(1, scrollY / scrollRange)
-            );
-            document.documentElement.style.setProperty(
-                "--story-progress",
-                storyProgress.toFixed(4)
-            );
-            if (!sectionRegistryObserver) {
-                updateStorySectionRegistry();
-            } else if (registryViewportHeight !== window.innerHeight) {
-                setupStorySectionRegistry();
-            }
 
             if (navbar) {
                 navbar.classList.toggle(
@@ -820,59 +612,6 @@
             scrollTicking = false;
         }
 
-        function startTimedOpeningIntro() {
-            if (
-                prefersReducedMotion ||
-                !opening ||
-                !openingStage ||
-                window.scrollY > opening.offsetTop ||
-                typeof gsap === "undefined"
-            ) {
-                return;
-            }
-
-            openingIntroTimeline = gsap.timeline();
-            openingIntroTimeline
-                .fromTo(
-                    openingStage,
-                    { "--o-question": 0 },
-                    {
-                        "--o-question": 1,
-                        duration: 0.65,
-                        ease: "power2.out"
-                    },
-                    0
-                )
-                .fromTo(
-                    openingStage,
-                    {
-                        "--o-answer": 0,
-                        "--o-answer-rise": "16px"
-                    },
-                    {
-                        "--o-answer": 1,
-                        "--o-answer-rise": "0px",
-                        duration: 0.6,
-                        ease: "power2.out"
-                    },
-                    0.5
-                )
-                .fromTo(
-                    openingStage,
-                    {
-                        "--o-brand": 0,
-                        "--o-scale": 0.4
-                    },
-                    {
-                        "--o-brand": 1,
-                        "--o-scale": 1,
-                        duration: 0.8,
-                        ease: "power3.out"
-                    },
-                    1
-                );
-        }
-
         window.addEventListener("scroll", () => {
             if (!scrollTicking) {
                 window.requestAnimationFrame(handleScroll);
@@ -886,36 +625,10 @@
             handleScroll();
         }, 150), { passive: true });
 
+        handleScroll();
+
         const menuBtn = $("#menuButton");
         const navLinks = $("#navLinks");
-        const motionToggle = $("#motionToggle");
-
-        if (motionToggle) {
-            const label = $(".motion-toggle-label", motionToggle);
-            const motionOff = prefersReducedMotion;
-            motionToggle.setAttribute("aria-pressed", String(motionOff));
-            if (label) label.textContent = `Motion: ${motionOff ? "Off" : "On"}`;
-            motionToggle.hidden = false;
-
-            motionToggle.addEventListener("click", () => {
-                const nextPreference =
-                    motionToggle.getAttribute("aria-pressed") === "true"
-                        ? "on"
-                        : "off";
-
-                try {
-                    localStorage.setItem("aran-motion", nextPreference);
-                } catch (error) {
-                    console.error(
-                        "Unable to save the motion preference.",
-                        error
-                    );
-                    return;
-                }
-
-                window.location.reload();
-            });
-        }
 
         if (menuBtn && navLinks) {
             menuBtn.setAttribute("aria-expanded", "false");
@@ -955,8 +668,99 @@
         }
 
         document.body.classList.add("js-enhanced");
+        document.documentElement.classList.remove("nav-init-pending");
         handleScroll();
-        startTimedOpeningIntro();
+
+        function initBackgroundGrid() {
+            if (prefersReducedMotion || isLowPowerDevice) return;
+
+            if ($(".dynamic-bg-grid")) return;
+
+            const gridContainer = document.createElement("div");
+
+            gridContainer.className = "dynamic-bg-grid";
+
+            gridContainer.style.cssText =
+                "position:fixed;top:0;left:0;width:100vw;height:100vh;" +
+                "z-index:-2;overflow:hidden;perspective:1000px;" +
+                "pointer-events:none;";
+
+            const gridPlane = document.createElement("div");
+
+            gridPlane.style.cssText =
+                "position:absolute;width:200%;height:200%;" +
+                "bottom:-50%;left:-50%;" +
+                "background-image:" +
+                "linear-gradient(rgba(200,230,226,0.05) 1px,transparent 1px)," +
+                "linear-gradient(90deg,rgba(200,230,226,0.05) 1px,transparent 1px);" +
+                "background-size:60px 60px;" +
+                "transform:rotateX(60deg) translateY(0px);";
+
+            gridContainer.appendChild(gridPlane);
+            document.body.prepend(gridContainer);
+
+        }
+
+        function initMouseHoverGradients() {
+            if (
+                prefersReducedMotion ||
+                window.innerWidth <= 1024
+            ) {
+                return;
+            }
+
+            const attachHoverEffect = (container) => {
+                if (container.dataset.hoverBound) return;
+
+                container.dataset.hoverBound = "true";
+
+                const computedStyle =
+                    window.getComputedStyle(container);
+
+                if (computedStyle.position === "static") {
+                    container.style.position = "relative";
+                }
+
+                container.style.overflow = "hidden";
+
+                const overlay = document.createElement("div");
+
+                overlay.className = "mouse-gradient-overlay";
+
+                overlay.style.cssText =
+                    "position:absolute;top:0;left:0;width:100%;height:100%;" +
+                    "pointer-events:none;z-index:0;" +
+                    "transition:opacity 0.4s ease;opacity:0;" +
+                    "background:radial-gradient(circle 200px at 50% 50%," +
+                    "rgba(200,230,226,0.12),transparent 80%);";
+
+                container.prepend(overlay);
+
+                container.addEventListener("mouseenter", () => {
+                    overlay.style.opacity = "1";
+                });
+
+                container.addEventListener("mousemove", (event) => {
+                    const rect = container.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+
+                    overlay.style.background =
+                        `radial-gradient(circle 200px at ${x}px ${y}px,` +
+                        "rgba(200,230,226,0.15),transparent 80%)";
+                });
+
+                container.addEventListener("mouseleave", () => {
+                    overlay.style.opacity = "0";
+                });
+            };
+
+            $$(".hover-gradient-container, .feature-card").forEach(
+                attachHoverEffect
+            );
+
+            window.attachHoverEffect = attachHoverEffect;
+        }
 
         const dynamicCapabilitiesData = [
             {
@@ -1005,7 +809,116 @@
             }
         ];
 
+        const filterOptions = [
+            { id: "all", label: "ALL" }
+        ];
+
         let currentCarousel = null;
+
+        function initRubberSegment() {
+            const container = $("#galleryFilters");
+
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            const labelsContainer = document.createElement("div");
+            labelsContainer.className = "rs-labels";
+
+            const thumb = document.createElement("div");
+            thumb.className = "rs-thumb";
+
+            const thumbLabelsContainer =
+                document.createElement("div");
+
+            thumbLabelsContainer.className = "rs-thumb-labels";
+            thumb.appendChild(thumbLabelsContainer);
+
+            const buttons = [];
+            let activeIdx = 0;
+
+            filterOptions.forEach((item, index) => {
+                const btn = document.createElement("button");
+
+                btn.className =
+                    "rs-btn" + (index === 0 ? " active" : "");
+
+                btn.type = "button";
+                btn.textContent = item.label;
+
+                btn.addEventListener("click", () => {
+                    if (index === activeIdx) return;
+
+                    activeIdx = index;
+                    updateThumb(index);
+                    loadCarousel(item.id);
+                });
+
+                labelsContainer.appendChild(btn);
+                buttons.push(btn);
+
+                const copy = document.createElement("span");
+
+                copy.className = "rs-copy";
+                copy.textContent = item.label;
+
+                thumbLabelsContainer.appendChild(copy);
+            });
+
+            container.appendChild(labelsContainer);
+            container.appendChild(thumb);
+
+            function updateThumb(index) {
+                const button = buttons[index];
+
+                if (!button) return;
+
+                buttons.forEach((item, i) => {
+                    item.classList.toggle("active", i === index);
+                });
+
+                const btnRect = button.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const labelsRect =
+                    labelsContainer.getBoundingClientRect();
+
+                const thumbX = btnRect.left - containerRect.left;
+                const width = btnRect.width;
+                const innerX = labelsRect.left - btnRect.left;
+
+                if (typeof gsap !== "undefined") {
+                    gsap.to(thumb, {
+                        x: thumbX,
+                        width,
+                        duration: 0.5,
+                        ease: "back.out(1.2)"
+                    });
+
+                    gsap.to(thumbLabelsContainer, {
+                        x: innerX,
+                        duration: 0.5,
+                        ease: "back.out(1.2)"
+                    });
+                } else {
+                    thumb.style.transform =
+                        `translateX(${thumbX}px)`;
+
+                    thumb.style.width = `${width}px`;
+
+                    thumbLabelsContainer.style.transform =
+                        `translateX(${innerX}px)`;
+                }
+            }
+
+            window.addEventListener(
+                "resize",
+                debounce(() => updateThumb(activeIdx), 150)
+            );
+
+            requestAnimationFrame(() => updateThumb(0));
+
+            loadCarousel("all");
+        }
 
         let activeModalMediaSize = null;
 
@@ -1431,7 +1344,6 @@
                 this.isMobile =
                     matchesMedia("(max-width: 768px)") ||
                     (matchesMedia("(pointer: coarse)") && vw <= 1024);
-                this.isHorizontal = this.isMobile;
 
                 if (!this.isMobile) {
                     this.cfg.cardWidth = Math.min(
@@ -1561,6 +1473,13 @@
                     card.appendChild(media);
                     card.appendChild(tint);
                     card.appendChild(title);
+
+                    if (
+                        window.attachHoverEffect &&
+                        !this.isHorizontal
+                    ) {
+                        window.attachHoverEffect(card);
+                    }
 
                     card.addEventListener("click", () => {
                         window.openProjectModal(item, card);
@@ -2233,19 +2152,35 @@
             }
         }
 
-        function loadCarousel() {
+        function loadCarousel(filter) {
             const container = $("#galleryGrid");
 
             if (!container) return;
+
+            const filtered =
+                filter === "all"
+                    ? dynamicCapabilitiesData
+                    : dynamicCapabilitiesData.filter(
+                        (item) => item.category === filter
+                    );
 
             if (currentCarousel) {
                 currentCarousel.destroy();
                 currentCarousel = null;
             }
 
+            if (filtered.length === 0) {
+                container.innerHTML =
+                    '<div style="text-align:center;padding:40px;' +
+                    'color:var(--text-muted);">' +
+                    "No capabilities mapped.</div>";
+
+                return;
+            }
+
             currentCarousel = new VanillaDepthCarousel(
                 container,
-                dynamicCapabilitiesData
+                filtered
             );
 
             if (typeof gsap !== "undefined" && !prefersReducedMotion) {
@@ -2259,7 +2194,7 @@
             }
         }
 
-        loadCarousel();
+        initRubberSegment();
 
         const FORM_ENDPOINT = "https://formspree.io/f/xdarywrz";
 
@@ -2462,10 +2397,6 @@
                             );
                         }
 
-                        trackConversion(
-                            "contact_form_success",
-                            "contact_form"
-                        );
                         lastSubmitTime = Date.now();
                         form.reset();
                         openSuccessModal();
@@ -2502,5 +2433,166 @@
             document.documentElement.classList.add("js-enabled");
         }
         
+        function initAntigravityBackground() {
+            if (
+                prefersReducedMotion ||
+                isLowPowerDevice ||
+                document.hidden
+            ) return;
+
+            const canvas = document.createElement("canvas");
+            canvas.id = "antigravityCanvas";
+            canvas.setAttribute("aria-hidden", "true");
+            canvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;";
+
+            const ctx = canvas.getContext("2d", { alpha: true });
+            if (!ctx) return;
+            document.body.prepend(canvas);
+
+            let width = 0;
+            let height = 0;
+            let animationFrameId = 0;
+            let isRunning = false;
+            let time = 0;
+            const frameInterval = 1000 / 30;
+
+            const isSmallScreen = matchesMedia("(max-width: 768px)");
+            const isMediumScreen = matchesMedia("(max-width: 1200px)");
+            const config = {
+                count: isSmallScreen ? 45 : (isMediumScreen ? 85 : 125),
+                magnetRadius: 120,
+                waveSpeed: 0.004,
+                waveAmplitude: 10,
+                particleSize: 1.5,
+                particleVariance: 1,
+                color: "#c8e6e2",
+                pulseSpeed: 0.020,
+                fieldStrength: 5,
+                depthFactor: 1.0
+            };
+
+            const particles = [];
+            const mouse = { x: -1000, y: -1000 };
+            const canUsePointer = matchesMedia("(hover: hover) and (pointer: fine)");
+
+            function resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                width = Math.max(1, window.innerWidth);
+                height = Math.max(1, window.innerHeight);
+                canvas.width = Math.round(width * dpr);
+                canvas.height = Math.round(height * dpr);
+                canvas.style.width = `${width}px`;
+                canvas.style.height = `${height}px`;
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+
+            resize();
+            for (let i = 0; i < config.count; i++) {
+                const y = Math.random() * height;
+                particles.push({
+                    x: Math.random() * width,
+                    y,
+                    baseY: y,
+                    size: config.particleSize + Math.random() * config.particleVariance,
+                    angle: Math.random() * Math.PI * 2,
+                    speed: (0.1 + Math.random() * 0.4) * config.depthFactor,
+                    pulseOffset: Math.random() * Math.PI * 2
+                });
+            }
+
+            let resizeTimer;
+                window.addEventListener("resize", () => {
+                    document.body.classList.add("is-resizing");
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        document.body.classList.remove("is-resizing");
+                        handleScroll();
+                    }, 200);
+                }, { passive: true });
+
+            const debouncedResize = debounce(resize, 150);
+            window.addEventListener("resize", debouncedResize, { passive: true });
+
+            function handlePointerMove(event) {
+                mouse.x = event.clientX;
+                mouse.y = event.clientY;
+            }
+            function handlePointerLeave() {
+                mouse.x = -1000;
+                mouse.y = -1000;
+            }
+            if (canUsePointer) {
+                window.addEventListener("pointermove", handlePointerMove, { passive: true });
+                window.addEventListener("blur", handlePointerLeave);
+            }
+
+            function animate() {
+                if (!isRunning || document.hidden) {
+                    animationFrameId = 0;
+                    return;
+                }
+
+                ctx.clearRect(0, 0, width, height);
+                time++;
+                for (const p of particles) {
+                    p.angle += config.waveSpeed;
+                    p.y = p.baseY + Math.sin(p.angle) * config.waveAmplitude;
+                    p.x -= p.speed;
+                    p.y -= p.speed * 0.5;
+
+                    if (p.x < 0 || p.y < 0 || p.y > height) {
+                        p.x = width + Math.random() * 50;
+                        p.y = Math.random() * height;
+                        p.baseY = p.y;
+                    }
+
+                    let drawX = p.x;
+                    let drawY = p.y;
+                    if (canUsePointer) {
+                        const dx = mouse.x - p.x;
+                        const dy = mouse.y - p.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist > 0 && dist < config.magnetRadius) {
+                            const force = (config.magnetRadius - dist) / config.magnetRadius;
+                            drawX -= (dx / dist) * force * config.fieldStrength;
+                            drawY -= (dy / dist) * force * config.fieldStrength;
+                        }
+                    }
+
+                    const currentSize = p.size + Math.sin(time * config.pulseSpeed + p.pulseOffset) * 0.5;
+                    ctx.beginPath();
+                    ctx.arc(drawX, drawY, Math.max(0.1, currentSize), 0, Math.PI * 2);
+                    ctx.fillStyle = config.color;
+                    ctx.globalAlpha = Math.min(1, Math.max(0.2, currentSize / 2));
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+                animationFrameId = window.setTimeout(() => {
+                    animationFrameId = window.requestAnimationFrame(animate);
+                }, frameInterval);
+            }
+
+            function startAnimation() {
+                if (isRunning || document.hidden || prefersReducedMotion) return;
+                isRunning = true;
+                animationFrameId = window.requestAnimationFrame(animate);
+            }
+            function stopAnimation() {
+                isRunning = false;
+                if (animationFrameId) {
+                    window.cancelAnimationFrame(animationFrameId);
+                    window.clearTimeout(animationFrameId);
+                    animationFrameId = 0;
+                }
+            }
+            function handleVisibilityChange() {
+                if (document.hidden) stopAnimation();
+                else startAnimation();
+            }
+
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+            startAnimation();
+        }
+
     });
 })();
