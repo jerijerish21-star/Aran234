@@ -63,3 +63,9 @@
 - Added a short, staggered opening sequence for the existing question, answer, and brand. User scrolling cancels the timed sequence and returns control to the existing scroll-driven intro; reduced motion skips the timed animation.
 - Converted the four existing capability rows to native, single-open `<details>` disclosures while preserving their copy. Summaries retain numbered controls and heading semantics, and remain keyboard-operable.
 - Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed the intro sequence completes and is interrupted cleanly by scrolling, reduced motion leaves all opening copy visible, native disclosures open and close one at a time with keyboard interaction, and the mobile section has no horizontal overflow.
+
+## Step 9: Conversion aids and tracking hooks
+
+- Added a fixed mobile “Start a conversation” link after the first story chapter, positioned above the chapter strip and hidden while the Contact chapter is active. Desktop continues to use the existing primary navigation CTA.
+- Added `dataLayer` events for primary/mobile contact CTAs, email and phone links, and successful form submissions. Events contain only event name and placement; no form values or personal data are sent, and no analytics script or network request was added.
+- Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed the CTA is mobile-only, does not overlap the chapter strip or overflow the viewport, hides in Contact, and pushes correctly placed events. The successful-form event was tested with a locally mocked fetch response; no external form request was sent.

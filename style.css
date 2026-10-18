@@ -460,6 +460,32 @@ html[data-story-chapter] .story-chapters {
     color: var(--teal);
 }
 
+.mobile-contact-cta {
+    position: fixed;
+    z-index: 25;
+    right: 16px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 16px;
+    display: none;
+    min-height: 52px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    border: 1px solid var(--teal);
+    background: var(--teal);
+    box-shadow: 0 8px 24px rgba(25, 23, 31, 0.18);
+    color: var(--eigengrau);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+}
+
+.mobile-contact-cta:hover {
+    background: var(--eigengrau);
+    color: var(--teal);
+}
+
 .menu-button {
     display: none;
     width: 42px;
@@ -2209,6 +2235,10 @@ html[data-story-chapter] .story-chapters {
         -webkit-overflow-scrolling: touch;
     }
 
+    html[data-story-chapter]:not([data-story-chapter="contact"]) .story-chapters {
+        bottom: calc(74px + env(safe-area-inset-bottom));
+    }
+
     .story-chapters::-webkit-scrollbar {
         display: none;
     }
@@ -2291,6 +2321,10 @@ html[data-story-chapter] .story-chapters {
 }
 
 @media (max-width: 768px) {
+    html[data-story-chapter]:not([data-story-chapter="contact"]) .mobile-contact-cta {
+        display: flex;
+    }
+
     :root {
         --page-gutter: 25px;
     }

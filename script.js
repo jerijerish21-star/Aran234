@@ -32,6 +32,38 @@
             );
         }
 
+        if (typeof window.dataLayer === "undefined") {
+            window.dataLayer = [];
+        }
+
+        function trackConversion(eventName, location) {
+            if (!eventName || !location) {
+                console.error("Conversion events require an event name and location.");
+                return;
+            }
+            if (!Array.isArray(window.dataLayer)) {
+                console.error("Conversion event could not be recorded because dataLayer is not an array.");
+                return;
+            }
+
+            window.dataLayer.push({
+                event: eventName,
+                conversion_location: location
+            });
+        }
+
+        document.addEventListener("click", (event) => {
+            const target = event.target instanceof Element
+                ? event.target.closest("a[data-conversion-event]")
+                : null;
+            if (!target) return;
+
+            trackConversion(
+                target.dataset.conversionEvent,
+                target.dataset.conversionLocation
+            );
+        });
+
         const dialogReturnTargets = new WeakMap();
         let activeDialogElement = null;
 
@@ -2430,6 +2462,10 @@
                             );
                         }
 
+                        trackConversion(
+                            "contact_form_success",
+                            "contact_form"
+                        );
                         lastSubmitTime = Date.now();
                         form.reset();
                         openSuccessModal();

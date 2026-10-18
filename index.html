@@ -74,7 +74,7 @@
                 <a href="#process" class="nav-item">Process</a>
                 <a href="#capabilities" class="nav-item">Capabilities</a>
                 <a href="#gallery" class="nav-item">Selected work</a>
-                <a href="#contact" class="nav-cta">Start a conversation <span aria-hidden="true">↗</span></a>
+                <a href="#contact" class="nav-cta" data-conversion-event="contact_cta_click" data-conversion-location="primary_nav">Start a conversation <span aria-hidden="true">↗</span></a>
                 <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false" hidden><span class="motion-toggle-label">Motion: On</span></button>
             </nav>
             <button class="menu-button" id="menuButton" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
@@ -82,6 +82,8 @@
             </button>
         </div>
     </header>
+
+    <a href="#contact" class="mobile-contact-cta" data-conversion-event="contact_cta_click" data-conversion-location="mobile_sticky">Start a conversation <span aria-hidden="true">↗</span></a>
 
     <main>
         <section id="opening" class="opening" aria-label="Aran Technocrafts introduction">
@@ -301,11 +303,11 @@
                     <div class="contact-info">
                         <div class="contact-details-grid">
                             <div class="contact-data"><span class="tech-label green">Visit us</span><p>65, 11th A Cross Rd, Yeshwanthpur Suburb II Stage,<br>Rajagopala Nagar, Peenya, Bengaluru, Karnataka 560058</p><a href="https://maps.google.com/?q=Aran+Technocrafts+Bangalore" target="_blank" rel="noopener noreferrer" class="tech-link inline">Get directions <span aria-hidden="true">↗</span></a></div>
-                            <div class="contact-data"><span class="tech-label green">Talk to our team</span><p><a href="mailto:info@arantechnocrafts.com">info@arantechnocrafts.com</a></p><p><a href="tel:+918050008243">+91 8050008243</a></p></div>
+                            <div class="contact-data"><span class="tech-label green">Talk to our team</span><p><a href="mailto:info@arantechnocrafts.com" data-conversion-event="contact_email_click" data-conversion-location="contact_details">info@arantechnocrafts.com</a></p><p><a href="tel:+918050008243" data-conversion-event="contact_phone_click" data-conversion-location="contact_details">+91 8050008243</a></p></div>
                         </div>
                     </div>
                     <div class="contact-form-container tech-card form-card">
-                        <p id="contactFormFallback" class="contact-form-fallback">The enquiry form is unavailable because JavaScript did not load. Please email <a href="mailto:info@arantechnocrafts.com">info@arantechnocrafts.com</a> or call <a href="tel:+918050008243">+91 8050008243</a>.</p>
+                        <p id="contactFormFallback" class="contact-form-fallback">The enquiry form is unavailable because JavaScript did not load. Please email <a href="mailto:info@arantechnocrafts.com" data-conversion-event="contact_email_click" data-conversion-location="form_fallback">info@arantechnocrafts.com</a> or call <a href="tel:+918050008243" data-conversion-event="contact_phone_click" data-conversion-location="form_fallback">+91 8050008243</a>.</p>
                         <form id="contactForm" method="POST" class="industrial-form">
                             <div class="form-header"><h3>Tell us about your project</h3><span class="form-status-indicator" aria-hidden="true"></span></div>
                             <input type="hidden" name="_subject" value="New Automation Project Enquiry">
