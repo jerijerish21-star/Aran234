@@ -398,7 +398,6 @@
             }
 
             const grids = [
-                ".core-grid",
                 ".value-grid",
                 ".technology-statements"
             ];
@@ -662,7 +661,9 @@
             });
         }
 
+        let openingIntroTimeline = null;
         let scrollTicking = false;
+
         function updateOpening(scrollY) {
             if (!opening || !openingStage) return 1;
             if (prefersReducedMotion) return 1;
@@ -738,6 +739,10 @@
 
         function handleScroll() {
             const scrollY = window.scrollY;
+            if (openingIntroTimeline && opening && scrollY > opening.offsetTop) {
+                openingIntroTimeline.kill();
+                openingIntroTimeline = null;
+            }
             const openingProgress = updateOpening(scrollY);
             const scrollRange = Math.max(
                 1,
@@ -781,6 +786,59 @@
             }
 
             scrollTicking = false;
+        }
+
+        function startTimedOpeningIntro() {
+            if (
+                prefersReducedMotion ||
+                !opening ||
+                !openingStage ||
+                window.scrollY > opening.offsetTop ||
+                typeof gsap === "undefined"
+            ) {
+                return;
+            }
+
+            openingIntroTimeline = gsap.timeline();
+            openingIntroTimeline
+                .fromTo(
+                    openingStage,
+                    { "--o-question": 0 },
+                    {
+                        "--o-question": 1,
+                        duration: 0.65,
+                        ease: "power2.out"
+                    },
+                    0
+                )
+                .fromTo(
+                    openingStage,
+                    {
+                        "--o-answer": 0,
+                        "--o-answer-rise": "16px"
+                    },
+                    {
+                        "--o-answer": 1,
+                        "--o-answer-rise": "0px",
+                        duration: 0.6,
+                        ease: "power2.out"
+                    },
+                    0.5
+                )
+                .fromTo(
+                    openingStage,
+                    {
+                        "--o-brand": 0,
+                        "--o-scale": 0.4
+                    },
+                    {
+                        "--o-brand": 1,
+                        "--o-scale": 1,
+                        duration: 0.8,
+                        ease: "power3.out"
+                    },
+                    1
+                );
         }
 
         window.addEventListener("scroll", () => {
@@ -866,6 +924,7 @@
 
         document.body.classList.add("js-enhanced");
         handleScroll();
+        startTimedOpeningIntro();
 
         const dynamicCapabilitiesData = [
             {

@@ -57,3 +57,9 @@
 - Added a scroll-triggered reveal for the hero headline and staggered reveals for the existing About paragraphs and statistic rows. Removed the broad About-grid animation so the section's text and stats can enter independently; the existing section-title reveals remain in place.
 - Kept all animation runtime-only and behind the existing reduced-motion gate, without changing page copy or static layout.
 - Verification: `node --check script.js` and `git diff --check` pass. Browser checks observed each reveal progress from hidden to fully visible under normal motion, while emulated reduced motion left the headline, paragraphs, and stats visible and did not add `motion-ready`.
+
+## Step 8: Timed intro and collapsible capabilities
+
+- Added a short, staggered opening sequence for the existing question, answer, and brand. User scrolling cancels the timed sequence and returns control to the existing scroll-driven intro; reduced motion skips the timed animation.
+- Converted the four existing capability rows to native, single-open `<details>` disclosures while preserving their copy. Summaries retain numbered controls and heading semantics, and remain keyboard-operable.
+- Verification: `node --check script.js` and `git diff --check` pass. Browser checks confirmed the intro sequence completes and is interrupted cleanly by scrolling, reduced motion leaves all opening copy visible, native disclosures open and close one at a time with keyboard interaction, and the mobile section has no horizontal overflow.
