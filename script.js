@@ -1405,7 +1405,7 @@
                         video.className =
                             "depth-carousel__img depth-carousel__video";
                         video.dataset.src = item.videoSrc;
-                        video.poster = item.posterSrc;
+                        video.dataset.poster = item.posterSrc;
                         video.preload = "none";
                         video.loop = true;
                         video.muted = true;
@@ -1443,6 +1443,8 @@
                         mediaPoster.className =
                             "depth-carousel__img depth-carousel__poster";
                         mediaPoster.src = item.posterSrc;
+                        mediaPoster.loading = "lazy";
+                        mediaPoster.decoding = "async";
                         mediaPoster.alt = "";
                         mediaPoster.draggable = false;
                     } else {
@@ -1451,6 +1453,8 @@
 
                         img.className = "depth-carousel__img";
                         img.src = item.imageSrc;
+                        img.loading = "lazy";
+                        img.decoding = "async";
                         img.alt = item.title || "Project image";
                         img.draggable = false;
 
@@ -1572,10 +1576,13 @@
                     this.pauseVideos();
                     this.cards.forEach((card) => {
                         const video = card.querySelector("video");
-                        if (video && video.hasAttribute("src")) {
-                            video.classList.remove("is-ready");
-                            video.removeAttribute("src");
-                            video.load();
+                        if (video) {
+                            if (video.hasAttribute("src")) {
+                                video.classList.remove("is-ready");
+                                video.removeAttribute("src");
+                                video.load();
+                            }
+                            video.removeAttribute("poster");
                         }
                     });
                     return;
@@ -1601,6 +1608,12 @@
                     video.preload = isActive ? "auto" : "none";
 
                     if (isActive) {
+                        if (
+                            !video.hasAttribute("poster") &&
+                            video.dataset.poster
+                        ) {
+                            video.poster = video.dataset.poster;
+                        }
                         if (!video.hasAttribute("src") && video.dataset.src) {
                             video.src = video.dataset.src;
                             video.load();
