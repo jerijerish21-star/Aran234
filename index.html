@@ -37,6 +37,16 @@
         href="assets/images/logo-optimized.png"
         fetchpriority="high">
 
+    <script>
+        try {
+            if (localStorage.getItem("aran-motion") === "off") {
+                document.documentElement.dataset.motion = "off";
+            }
+        } catch (error) {
+            console.warn("Unable to read the saved motion preference.", error);
+        }
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
     
@@ -228,7 +238,7 @@
             </div>
         </section>
 
-        <section class="section value-section">
+        <section id="difference" class="section value-section">
             <div class="container">
                 <div class="section-kicker light-kicker"><span>05</span><span>The difference</span><span class="kicker-line"></span></div>
                 <div class="value-heading"><h2 class="section-title">Engineered for the <em>long run.</em></h2><p>Good automation does more than run. It makes your operation more capable.</p></div>

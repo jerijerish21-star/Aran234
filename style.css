@@ -14,6 +14,10 @@
     --font-sans: "DM Sans", sans-serif;
     --font-display: "Playfair Display", Georgia, serif;
     --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --story-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --story-dur: 0.75s;
+    --story-line-opacity-paper: 0.12;
+    --story-line-opacity-dark: 0.12;
     --page-gutter: clamp(20px, 6.5vw, 300px);
     --page-gutter-bottom: clamp(20px, 6.5vw, 300px);
     --page-content-max: clamp(1600px, 78vw, 4100px);
@@ -2614,6 +2618,92 @@ textarea:focus-visible {
     .opening-scroll span {
         animation: none;
     }
+}
+
+html[data-motion="off"] {
+    scroll-behavior: auto;
+}
+
+html[data-motion="off"] .opening {
+    height: auto;
+}
+
+html[data-motion="off"] .opening-stage {
+    position: relative;
+    display: flex;
+    height: auto;
+    min-height: 100svh;
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: stretch;
+    padding: max(96px, 12svh) var(--page-gutter) 40px;
+    --o-t: 1;
+    --o-question: 1;
+    --o-answer: 1;
+    --o-brand: 1;
+    --o-scale: 1;
+}
+
+html[data-motion="off"] .opening-blueprint,
+html[data-motion="off"] .opening-scroll {
+    display: none;
+}
+
+html[data-motion="off"] .opening-question,
+html[data-motion="off"] .opening-answer {
+    position: relative;
+    inset: auto;
+    width: min(26em, 100%);
+    color: var(--ink);
+    opacity: 1;
+    transform: none;
+}
+
+html[data-motion="off"] .opening-answer {
+    align-self: flex-end;
+    margin-top: 1.25rem;
+}
+
+html[data-motion="off"] .opening-brand {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin: clamp(2rem, 8svh, 4rem) auto 0;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+}
+
+html[data-motion="off"] .opening-note {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: flex-end;
+    margin-top: auto;
+    color: var(--ink);
+}
+
+html[data-motion="off"] *,
+html[data-motion="off"] *::before,
+html[data-motion="off"] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+html[data-motion="off"] .motion-ready .process-timeline-container {
+    min-height: 0;
+}
+
+html[data-motion="off"] .motion-ready .process-experience {
+    position: relative;
+    top: auto;
+    min-height: 390px;
+}
+
+html[data-motion="off"] .opening-scroll span {
+    animation: none;
 }
 
 /* Blueprint scaling for large displays (4K / 60" TVs) */

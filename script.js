@@ -131,14 +131,69 @@
                 : false;
         }
 
-        const prefersReducedMotion = matchesMedia(
-            "(prefers-reduced-motion: reduce)"
-        );
+        const motionPreference = document.documentElement.dataset.motion;
+        const prefersReducedMotion =
+            motionPreference === "off" ||
+            (motionPreference !== "on" &&
+                matchesMedia("(prefers-reduced-motion: reduce)"));
         const isLowPowerDevice =
             window.innerWidth <= 1024 ||
             matchesMedia("(pointer: coarse)");
         let processSequenceTween = null;
         let processSequenceObserver = null;
+        const storySections = $$(".section-kicker")
+            .map((kicker) => kicker.closest(".section"))
+            .filter((section) => section && section.id);
+        let currentStorySection = null;
+        let sectionRegistryObserver = null;
+        let registryViewportHeight = 0;
+
+        function updateStorySectionRegistry() {
+            const marker = window.innerHeight / 2;
+            const currentSection = storySections.find((section) => {
+                const bounds = section.getBoundingClientRect();
+                return bounds.top <= marker && bounds.bottom > marker;
+            });
+
+            currentStorySection = currentSection ? currentSection.id : null;
+            if (currentStorySection) {
+                document.documentElement.dataset.storyChapter =
+                    currentStorySection;
+            } else {
+                delete document.documentElement.dataset.storyChapter;
+            }
+        }
+
+        function setupStorySectionRegistry() {
+            if (!("IntersectionObserver" in window)) return false;
+            if (sectionRegistryObserver) {
+                sectionRegistryObserver.disconnect();
+            }
+
+            const topInset = Math.floor(window.innerHeight / 2);
+            const bottomInset = Math.max(
+                0,
+                window.innerHeight - topInset - 1
+            );
+            sectionRegistryObserver = new IntersectionObserver(
+                updateStorySectionRegistry,
+                {
+                    rootMargin:
+                        `-${topInset}px 0px -${bottomInset}px 0px`,
+                    threshold: 0
+                }
+            );
+            storySections.forEach((section) =>
+                sectionRegistryObserver.observe(section)
+            );
+            registryViewportHeight = window.innerHeight;
+            updateStorySectionRegistry();
+            return true;
+        }
+
+        if (!setupStorySectionRegistry()) {
+            updateStorySectionRegistry();
+        }
 
         // GSAP animations
         if (
@@ -551,6 +606,23 @@
         function handleScroll() {
             const scrollY = window.scrollY;
             const openingProgress = updateOpening(scrollY);
+            const scrollRange = Math.max(
+                1,
+                document.documentElement.scrollHeight - window.innerHeight
+            );
+            const storyProgress = Math.max(
+                0,
+                Math.min(1, scrollY / scrollRange)
+            );
+            document.documentElement.style.setProperty(
+                "--story-progress",
+                storyProgress.toFixed(4)
+            );
+            if (!sectionRegistryObserver) {
+                updateStorySectionRegistry();
+            } else if (registryViewportHeight !== window.innerHeight) {
+                setupStorySectionRegistry();
+            }
 
             if (navbar) {
                 navbar.classList.toggle(
