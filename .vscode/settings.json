@@ -1,0 +1,10 @@
+{
+    "liveServer.settings.port": 5500,
+    "remote.autoForwardPorts": true,
+    "remote.portsAttributes": {
+        "5501": {
+            "label": "Website",
+            "onAutoForward": "openBrowser"
+        }
+    }
+}
