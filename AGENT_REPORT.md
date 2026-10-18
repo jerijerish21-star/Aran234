@@ -74,3 +74,9 @@
 
 - Reviewed the process section at 1440×900 against the existing four-step milestone rail, active-step narrative, and process path/nodes in the story-layer SVG.
 - Decision: did not add a second illustration. It would repeat the process cues already present and compete with the spacious sticky timeline; the existing elements provide a clear process visual without another asset or copy change.
+
+## Step 11: Final regression audit
+
+- Added a compact tablet navigation layout after the audit found the desktop navigation exceeded its available width around 1024px.
+- Verification: `node --check script.js` and `git diff --check` pass. A 4× CPU-throttled browser sweep at 320, 360, 390, 768, 900, 901, 1024, 1100, and 1440px found no document or navigation overflow. The mobile menu/toggle, keyboard disclosure, story chapter, OS reduced motion, saved On/Off overrides, and no-JavaScript gallery/contact fallbacks passed. The only console resource error was expected from deliberately blocking `script.js` for the fallback check.
+- No public deployment was performed; the changes remain on `story-upgrade`.
